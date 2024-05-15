@@ -1,0 +1,6 @@
+{
+  "appTitle": "school_role",
+  "@appTitle": {
+    "description": "The title of the application"
+  }
+}
