@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 
-// import 'src/app.dart';
-// import 'src/settings/settings_controller.dart';
-// import 'src/settings/settings_service.dart';
-
 void main() async {
   runApp( const MyApp() );
 }
@@ -20,6 +16,25 @@ class MyApp extends StatelessWidget {
           backgroundColor: Colors.white,
           shadowColor: Colors.black,
           toolbarHeight: 80,
+          leading: IconButton(
+              icon: const Icon(Icons.more_horiz),
+              onPressed: () {
+              },
+              color: Colors.black,
+            ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 10.0),
+              child: ElevatedButton(
+                onPressed: () {
+                },
+                child: const Text(
+                  'sign out',
+                  style: TextStyle(color: Colors.black),
+                ),
+             ),
+            ),
+          ],
         ),
       ),
     );
