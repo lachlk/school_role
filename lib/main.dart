@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
 
 void main() async {
   runApp(const MyApp());
@@ -60,10 +60,17 @@ class StudentList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView(
-        children: const <Widget>[
-          ListTile(
-            title: Text('bob'),
-            trailing: PresenceSelector(),
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: ListTile(
+              shape: RoundedRectangleBorder(
+                side: const BorderSide(color: Colors.black, width: 1),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              title: const Text('bob'),
+              trailing: const PresenceSelector(),
+            ),
           )
         ]
       )
@@ -86,6 +93,7 @@ class _PresenceSelectorState extends State<PresenceSelector> {
   @override
   Widget build(BuildContext context) {
     return SegmentedButton<Presence>(
+      showSelectedIcon: false,
       segments: const <ButtonSegment<Presence>>[
         ButtonSegment<Presence>(
           value: Presence.present,
@@ -101,6 +109,11 @@ class _PresenceSelectorState extends State<PresenceSelector> {
         ),
       ], 
       selected: <Presence>{presenceView},
+      onSelectionChanged: (Set<Presence> newSelection) {
+        setState(() {
+          presenceView = newSelection.first;
+        });
+      },
     );
   }
 }
