@@ -1,6 +1,19 @@
 import 'package:flutter/material.dart';
 
 
+List<String> students = [
+  'Emily Harrison',
+  'Jacob Martinez',
+  'Olivia Thompson',
+  'Ethan Rodriguez',
+  'Sophia Carter',
+  'Noah Sullivan',
+  'Ava Murphy',
+  'Liam Bennett',
+  'Mia Rivera',
+  'Benjamin Foster',
+];
+
 void main() async {
   runApp(const MyApp());
 }
