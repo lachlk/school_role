@@ -1,19 +1,6 @@
 import 'package:flutter/material.dart';
 
 
-List<String> students = [
-  'Emily Harrison',
-  'Jacob Martinez',
-  'Olivia Thompson',
-  'Ethan Rodriguez',
-  'Sophia Carter',
-  'Noah Sullivan',
-  'Ava Murphy',
-  'Liam Bennett',
-  'Mia Rivera',
-  'Benjamin Foster',
-];
-
 void main() async {
   runApp(const MyApp());
 }
@@ -71,9 +58,24 @@ class StudentList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    var students = [
+      'Emily Harrison',
+      'Jacob Martinez',
+      'Olivia Thompson',
+      'Ethan Rodriguez',
+      'Sophia Carter',
+      'Noah Sullivan',
+      'Ava Murphy',
+      'Liam Bennett',
+      'Mia Rivera',
+      'Benjamin Foster',
+    ];
+
     return Scaffold(
       body: ListView(
         children: <Widget>[
+          for (var student in students) 
           Padding(
             padding: const EdgeInsets.all(5.0),
             child: ListTile(
@@ -81,7 +83,7 @@ class StudentList extends StatelessWidget {
                 side: const BorderSide(color: Colors.black, width: 1),
                 borderRadius: BorderRadius.circular(10.0),
               ),
-              title: const Text('bob'),
+              title: Text(student),
               trailing: const PresenceSelector(),
             ),
           )
