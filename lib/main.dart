@@ -54,9 +54,14 @@ class Header extends StatelessWidget {
   }
 }
 
-class StudentList extends StatelessWidget {
+class StudentList extends StatefulWidget {
   const StudentList({super.key});
 
+  @override
+  State<StudentList> createState() => _StudentListState();
+}
+
+class _StudentListState extends State<StudentList> {
   @override
   Widget build(BuildContext context) {
 
@@ -71,6 +76,12 @@ class StudentList extends StatelessWidget {
       'Liam Bennett',
       'Mia Rivera',
       'Benjamin Foster',
+      'Charlotte Davis',
+      'James Wilson',
+      'Isabella Moore',
+      'Michael Turner',
+      'Grace Anderson',
+      'Daniel Cooper',
     ];
 
     return Scaffold(
