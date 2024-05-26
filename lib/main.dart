@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 void main() async {
   runApp(const MyApp());
 }
@@ -28,9 +27,12 @@ class Header extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         elevation: 2,
-        backgroundColor: Colors.white,
         shadowColor: Colors.black,
         toolbarHeight: 80,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20))),
         leading: IconButton(
           icon: const Icon(Icons.more_horiz),
           onPressed: () {},
@@ -64,7 +66,6 @@ class StudentList extends StatefulWidget {
 class _StudentListState extends State<StudentList> {
   @override
   Widget build(BuildContext context) {
-
     var students = [
       'Emily Harrison',
       'Jacob Martinez',
@@ -85,23 +86,21 @@ class _StudentListState extends State<StudentList> {
     ];
 
     return Scaffold(
-      body: ListView(
-        children: <Widget>[
-          for (var student in students) 
-          Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: ListTile(
-              shape: RoundedRectangleBorder(
-                side: const BorderSide(color: Colors.black, width: 1),
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              title: Text(student),
-              trailing: const PresenceSelector(),
+        body: ListView(children: <Widget>[
+      for (var student in students)
+        Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: ListTile(
+            tileColor: const Color.fromRGBO(245, 245, 251, 100),
+            shape: RoundedRectangleBorder(
+              side: const BorderSide(color: Colors.black, width: 1),
+              borderRadius: BorderRadius.circular(20),
             ),
-          )
-        ]
-      )
-    );
+            title: Text(student),
+            trailing: const PresenceSelector(),
+          ),
+        )
+    ]));
   }
 }
 
@@ -134,7 +133,7 @@ class _PresenceSelectorState extends State<PresenceSelector> {
           value: Presence.absent,
           label: Text('Absent'),
         ),
-      ], 
+      ],
       selected: <Presence>{presenceView},
       onSelectionChanged: (Set<Presence> newSelection) {
         setState(() {
