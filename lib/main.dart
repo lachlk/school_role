@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_role/theme.dart';
 
 void main() async {
   runApp(const MyApp());
@@ -11,9 +12,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-      ),
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: ThemeMode.system,
       home: const Header(),
     );
   }
@@ -91,7 +92,6 @@ class _StudentListState extends State<StudentList> {
         Padding(
           padding: const EdgeInsets.all(5.0),
           child: ListTile(
-            tileColor: const Color.fromRGBO(245, 245, 251, 100),
             shape: RoundedRectangleBorder(
               side: const BorderSide(color: Colors.black, width: 1),
               borderRadius: BorderRadius.circular(20),
