@@ -22,16 +22,16 @@ class Header extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.more_horiz),
           onPressed: () {},
-          color: Colors.black,
+          color: Theme.of(context).colorScheme.onPrimary,
         ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 10.0),
             child: ElevatedButton(
               onPressed: () {},
-              child: const Text(
+              child: Text(
                 'Sign Out',
-                style: TextStyle(color: Colors.black),
+                style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
               ),
             ),
           ),

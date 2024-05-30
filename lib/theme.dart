@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-const _brandColor = Colors.green;
+const _brandColor = Colors.white;
 
 class DynamicTheme extends StatelessWidget {
   const DynamicTheme({super.key, required Header home});
@@ -27,14 +27,13 @@ class DynamicTheme extends StatelessWidget {
 
         if (lightDynamic != null && darkDynamic != null) {
           lightColorTheme = lightDynamic.harmonized();
-          lightColorTheme = lightColorTheme.copyWith(secondary: _brandColor);
+          lightColorTheme = lightColorTheme.copyWith(onPrimary: Colors.black, secondary: _brandColor);
 
           darkColorTheme = darkDynamic.harmonized();
-          darkColorTheme = darkColorTheme.copyWith(secondary: _brandColor);
+          darkColorTheme = darkColorTheme.copyWith(onPrimary: Colors.white, secondary: _brandColor);
         } else {
           lightColorTheme = ColorScheme.fromSeed(
             seedColor: _brandColor,
-            brightness: Brightness.light,
           );
           darkColorTheme = ColorScheme.fromSeed(
             seedColor: _brandColor,
@@ -44,9 +43,11 @@ class DynamicTheme extends StatelessWidget {
 
         return MaterialApp(
           theme: ThemeData(
+            useMaterial3: true,
             colorScheme: lightColorTheme,
           ),
           darkTheme: ThemeData(
+            useMaterial3: true,
             colorScheme: darkColorTheme,
           ),
           debugShowCheckedModeBanner: false,
