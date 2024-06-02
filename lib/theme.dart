@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-const _brandColor = Colors.white;
+const _brandColor = Colors.grey;
 
 class DynamicTheme extends StatelessWidget {
   const DynamicTheme({super.key, required Header home});

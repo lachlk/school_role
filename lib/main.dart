@@ -1,3 +1,4 @@
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:school_role/theme.dart';
 
@@ -79,7 +80,7 @@ class _StudentListState extends State<StudentList> {
           padding: const EdgeInsets.all(5.0),
           child: ListTile(
             shape: RoundedRectangleBorder(
-              side: const BorderSide(color: Colors.black, width: 1),
+              side: BorderSide(color: Theme.of(context).colorScheme.onPrimary, width: 0.5),
               borderRadius: BorderRadius.circular(20),
             ),
             title: Text(student),
