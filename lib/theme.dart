@@ -27,10 +27,12 @@ class DynamicTheme extends StatelessWidget {
 
         if (lightDynamic != null && darkDynamic != null) {
           lightColorTheme = lightDynamic.harmonized();
-          lightColorTheme = lightColorTheme.copyWith(onPrimary: Colors.black, secondary: _brandColor);
+          lightColorTheme = lightColorTheme.copyWith(
+              onPrimary: Colors.black, secondary: _brandColor);
 
           darkColorTheme = darkDynamic.harmonized();
-          darkColorTheme = darkColorTheme.copyWith(onPrimary: Colors.white, secondary: _brandColor);
+          darkColorTheme = darkColorTheme.copyWith(
+              onPrimary: Colors.white, secondary: _brandColor);
         } else {
           lightColorTheme = ColorScheme.fromSeed(
             seedColor: _brandColor,
@@ -43,8 +45,8 @@ class DynamicTheme extends StatelessWidget {
 
         return MaterialApp(
           theme: ThemeData(
-            useMaterial3: true,
             colorScheme: lightColorTheme,
+            useMaterial3: true,
           ),
           darkTheme: ThemeData(
             useMaterial3: true,

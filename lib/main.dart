@@ -31,7 +31,8 @@ class Header extends StatelessWidget {
               onPressed: () {},
               child: Text(
                 'Sign Out',
-                style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onPrimary),
               ),
             ),
           ),
