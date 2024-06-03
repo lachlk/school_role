@@ -32,7 +32,7 @@ class DynamicTheme extends StatelessWidget {
 
           darkColorTheme = darkDynamic.harmonized();
           darkColorTheme = darkColorTheme.copyWith(
-              onPrimary: Colors.white, secondary: _brandColor);
+              onPrimary: Colors.grey, secondary: _brandColor);
         } else {
           lightColorTheme = ColorScheme.fromSeed(
             seedColor: _brandColor,
