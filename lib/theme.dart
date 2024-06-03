@@ -36,9 +36,11 @@ class DynamicTheme extends StatelessWidget {
         } else {
           lightColorTheme = ColorScheme.fromSeed(
             seedColor: _brandColor,
+            onPrimary: Colors.black
           );
           darkColorTheme = ColorScheme.fromSeed(
             seedColor: _brandColor,
+            onPrimary: Colors.grey,
             brightness: Brightness.dark,
           );
         }
