@@ -7,7 +7,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const DynamicTheme( // DynamicTheme is the theme provider
+    return const DynamicTheme(
+      // DynamicTheme is the theme provider
       home: Header(), // Setting Header as home widget
     );
   }
@@ -20,19 +21,24 @@ class DynamicTheme extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DynamicColorBuilder( // Uses DynamicColorBuilder to dynamically change colors
+    return DynamicColorBuilder(
+      // Uses DynamicColorBuilder to dynamically change colors
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
         ColorScheme lightColorTheme;
         ColorScheme darkColorTheme;
 
         if (lightDynamic != null && darkDynamic != null) {
-          lightColorTheme = lightDynamic.harmonized(); // Harmonizes light color theme
+          lightColorTheme =
+              lightDynamic.harmonized(); // Harmonizes light color theme
           lightColorTheme = lightColorTheme.copyWith(
-              onPrimary: Colors.black, secondary: _brandColor); // Customizing light color theme
+              onPrimary: Colors.black,
+              secondary: _brandColor); // Customizing light color theme
 
-          darkColorTheme = darkDynamic.harmonized(); // Harmonizes dark color theme
+          darkColorTheme =
+              darkDynamic.harmonized(); // Harmonizes dark color theme
           darkColorTheme = darkColorTheme.copyWith(
-              onPrimary: Colors.grey, secondary: _brandColor); // Customizing dark color theme
+              onPrimary: Colors.grey,
+              secondary: _brandColor); // Customizing dark color theme
         } else {
           lightColorTheme = ColorScheme.fromSeed(
               seedColor: _brandColor, onPrimary: Colors.black);
