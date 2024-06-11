@@ -2,22 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:school_role/main.dart'; // Imports the required packages and files
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const DynamicTheme(
-      // DynamicTheme is the theme provider
-      home: Header(), // Setting Header as home widget
-    );
-  }
-}
-
 const _brandColor = Colors.grey; // The primary color
 
 class DynamicTheme extends StatelessWidget {
-  const DynamicTheme({super.key, required Header home});
+  const DynamicTheme(
+      {super.key, required Header home, required StudentList body});
 
   @override
   Widget build(BuildContext context) {

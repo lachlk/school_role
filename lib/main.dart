@@ -5,6 +5,19 @@ void main() async {
   runApp(const MyApp()); // Start of the application
 }
 
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const DynamicTheme(
+      // DynamicTheme is the theme provider
+      home: Header(), // Setting Header as home widget
+      body: StudentList(), // Setting StudentList as body
+    );
+  }
+}
+
 class Header extends StatelessWidget {
   const Header({super.key}); // Header widget for app header
 
@@ -22,7 +35,9 @@ class Header extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.more_horiz),
           onPressed: () {},
-          color: Theme.of(context).colorScheme.onPrimary, // Icon color based on dark or light mode
+          color: Theme.of(context)
+              .colorScheme
+              .onPrimary, // Icon color based on dark or light mode
         ),
         actions: [
           Padding(
@@ -31,14 +46,16 @@ class Header extends StatelessWidget {
               onPressed: () {},
               child: Text(
                 'Sign Out',
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onPrimary), // Text color based on dark or light mode
+                style: TextStyle(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onPrimary), // Text color based on dark or light mode
               ),
             ),
           ),
         ],
       ),
-      body: const StudentList(), // Displays the student list
+      body: const StudentList(),
     );
   }
 }
@@ -47,13 +64,15 @@ class StudentList extends StatefulWidget {
   const StudentList({super.key}); // Student list widget
 
   @override
-  State<StudentList> createState() => _StudentListState(); // Creats state for student list
+  State<StudentList> createState() =>
+      _StudentListState(); // Creats state for student list
 }
 
 class _StudentListState extends State<StudentList> {
   @override
   Widget build(BuildContext context) {
-    var students = [ // List of student names
+    var students = [
+      // List of student names
       'Emily Harrison',
       'Jacob Martinez',
       'Olivia Thompson',
@@ -79,7 +98,8 @@ class _StudentListState extends State<StudentList> {
           padding: const EdgeInsets.all(5.0),
           child: ListTile(
             shape: RoundedRectangleBorder(
-              side: BorderSide(color: Theme.of(context).colorScheme.onPrimary, width: 0.5),
+              side: BorderSide(
+                  color: Theme.of(context).colorScheme.onPrimary, width: 0.5),
               borderRadius: BorderRadius.circular(20),
             ),
             title: Text(student), // Display student name
@@ -96,7 +116,8 @@ class PresenceSelector extends StatefulWidget {
   const PresenceSelector({super.key}); // Presence selector widget
 
   @override
-  State<PresenceSelector> createState() => _PresenceSelectorState(); // Create state for presence selector
+  State<PresenceSelector> createState() =>
+      _PresenceSelectorState(); // Create state for presence selector
 }
 
 class _PresenceSelectorState extends State<PresenceSelector> {
@@ -104,7 +125,8 @@ class _PresenceSelectorState extends State<PresenceSelector> {
 
   @override
   Widget build(BuildContext context) {
-    return SegmentedButton<Presence>( // Segmented button for presence
+    return SegmentedButton<Presence>(
+      // Segmented button for presence
       showSelectedIcon: false,
       segments: const <ButtonSegment<Presence>>[
         ButtonSegment<Presence>(
@@ -120,7 +142,7 @@ class _PresenceSelectorState extends State<PresenceSelector> {
           label: Text('Absent'),
         ),
       ],
-      selected: <Presence>{presenceView}, // Selected presence 
+      selected: <Presence>{presenceView}, // Selected presence
       onSelectionChanged: (Set<Presence> newSelection) {
         setState(() {
           presenceView = newSelection.first; // Updates presence for selected
