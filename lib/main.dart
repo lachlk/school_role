@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_role/presence_page.dart';
+import 'package:school_role/pages/presence_page.dart';
 import 'package:school_role/theme.dart'; // Imports the required packages and files
 
 void main() async {

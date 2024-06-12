@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:school_role/main.dart';
-import 'package:school_role/presence_page.dart'; // Imports the required packages and files
+import 'package:school_role/pages/presence_page.dart'; // Imports the required packages and files
 
 const _brandColor = Colors.grey; // The primary color
 
