@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:school_role/main.dart';
-import 'package:school_role/pages/presence_page.dart'; // Imports the required packages and files
+import 'package:school_role/pages/auth_gate.dart'; // Imports the required packages and files
 
 const _brandColor = Colors.grey; // The primary color
 
 class DynamicTheme extends StatelessWidget {
   const DynamicTheme(
-      {super.key, required Header home, required StudentList body});
+      {super.key, required Header home, required AuthGate body});
 
   @override
   Widget build(BuildContext context) {

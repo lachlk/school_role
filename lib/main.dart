@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:school_role/pages/presence_page.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:school_role/firebase_options.dart';
+
+import 'package:firebase_ui_auth/firebase_ui_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fba;
+
+import 'package:school_role/pages/auth_gate.dart';
 import 'package:school_role/theme.dart'; // Imports the required packages and files
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp()); // Start of the application
 }
 
@@ -14,7 +22,7 @@ class MyApp extends StatelessWidget {
     return const DynamicTheme(
       // DynamicTheme is the theme provider
       home: Header(), // Setting Header as home widget
-      body: StudentList(), // Setting StudentList as body
+      body: AuthGate(), // Setting StudentList as body
     );
   }
 }
@@ -40,23 +48,44 @@ class Header extends StatelessWidget {
               .colorScheme
               .onPrimary, // Icon color based on dark or light mode
         ),
-        actions: [
+        actions: const [
           Padding(
-            padding: const EdgeInsets.only(right: 10.0),
-            child: ElevatedButton(
-              onPressed: () {},
-              child: Text(
-                'Sign Out',
-                style: TextStyle(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onPrimary), // Text color based on dark or light mode
-              ),
-            ),
+            padding: EdgeInsets.only(right: 10.0),
+            child: SignOutButton()
           ),
         ],
       ),
-      body: const StudentList(),
+      body: const AuthGate(),
+    );
+  }
+}
+
+class SignOutButton extends StatelessWidget {
+  /// {@macro ui.auth.auth_controller.auth}
+  final fba.FirebaseAuth? auth;
+
+  /// {@macro ui.shared.widgets.button_variant}
+  final ButtonVariant variant;
+
+  /// {@macro ui.auth.widgets.sign_out_button}
+  const SignOutButton({
+    super.key,
+    this.auth,
+    this.variant = ButtonVariant.filled,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      child: Text(
+        "sign out",
+      style: TextStyle(
+        color: Theme.of(context).colorScheme.onPrimary), // Text color based on dark or light mode
+      ),
+      onPressed: () => FirebaseUIAuth.signOut(
+        context: context,
+        auth: auth,
+      ),
     );
   }
 }
