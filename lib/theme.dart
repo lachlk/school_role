@@ -21,20 +21,20 @@ class DynamicTheme extends StatelessWidget {
           lightColorTheme =
               lightDynamic.harmonized(); // Harmonizes light color theme
           lightColorTheme = lightColorTheme.copyWith(
-              onPrimary: Colors.black,
+              outline: Colors.black,
               secondary: _brandColor); // Customizing light color theme
 
           darkColorTheme =
               darkDynamic.harmonized(); // Harmonizes dark color theme
           darkColorTheme = darkColorTheme.copyWith(
-              onPrimary: Colors.grey,
+              outline: Colors.grey,
               secondary: _brandColor); // Customizing dark color theme
         } else {
           lightColorTheme = ColorScheme.fromSeed(
-              seedColor: _brandColor, onPrimary: Colors.black);
+              seedColor: _brandColor, outline: Colors.black);
           darkColorTheme = ColorScheme.fromSeed(
             seedColor: _brandColor,
-            onPrimary: Colors.grey,
+            outline: Colors.grey,
             brightness: Brightness.dark,
           );
         }

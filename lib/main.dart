@@ -46,7 +46,7 @@ class Header extends StatelessWidget {
           onPressed: () {},
           color: Theme.of(context)
               .colorScheme
-              .onPrimary, // Icon color based on dark or light mode
+              .outline, // Icon color based on dark or light mode
         ),
         actions: const [
           Padding(
@@ -80,7 +80,7 @@ class SignOutButton extends StatelessWidget {
       child: Text(
         "sign out",
       style: TextStyle(
-        color: Theme.of(context).colorScheme.onPrimary), // Text color based on dark or light mode
+        color: Theme.of(context).colorScheme.outline), // Text color based on dark or light mode
       ),
       onPressed: () => FirebaseUIAuth.signOut(
         context: context,
