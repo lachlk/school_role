@@ -39,7 +39,7 @@ class _StudentListState extends State<StudentList> {
           child: ListTile(
             shape: RoundedRectangleBorder(
               side: BorderSide(
-                  color: Theme.of(context).colorScheme.onPrimary, width: 0.5),
+                  color: Theme.of(context).colorScheme.outline, width: 0.5),
               borderRadius: BorderRadius.circular(20),
             ),
             title: Text(student), // Display student name
@@ -91,5 +91,3 @@ class _PresenceSelectorState extends State<PresenceSelector> {
     );
   }
 }
-
-
