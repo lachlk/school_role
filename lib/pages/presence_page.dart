@@ -1,4 +1,7 @@
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
+// ignore: unused_import
+import 'package:school_role/main.dart';
 
 class StudentList extends StatefulWidget {
   const StudentList({super.key}); // Student list widget
@@ -32,20 +35,20 @@ class _StudentListState extends State<StudentList> {
     ];
 
     return Scaffold(
-        body: ListView(children: <Widget>[
+      body: ListView(children: <Widget>[
       for (var student in students)
         Padding(
-          padding: const EdgeInsets.all(5.0),
-          child: ListTile(
-            shape: RoundedRectangleBorder(
-              side: BorderSide(
-                  color: Theme.of(context).colorScheme.outline, width: 0.5),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            title: Text(student), // Display student name
-            trailing: const PresenceSelector(), // Dislay presence selector
-          ),
-        )
+            padding: const EdgeInsets.all(2.0),
+            child: Card(
+              surfaceTintColor: Theme.of(context)
+                  .colorScheme
+                  .primary
+                  .harmonizeWith(Colors.white),
+              child: ListTile(
+                title: Text(student), // Display student name
+                trailing: const PresenceSelector(), // Dislay presence selector
+              ),
+            ))
     ]));
   }
 }
@@ -72,6 +75,7 @@ class _PresenceSelectorState extends State<PresenceSelector> {
         ButtonSegment<Presence>(
           value: Presence.present,
           label: Text('Present'),
+          
         ),
         ButtonSegment<Presence>(
           value: Presence.late,
