@@ -18,40 +18,42 @@ class ClassesList extends StatelessWidget {
       '6CHE'
     ];
 
-    return Scaffold(
-      body: GridView.count(
-        crossAxisCount: MediaQuery.of(context).size.shortestSide < 600  ? 2:4,
-        children: <Widget>[
-          for (var classroom in classes)
-            Card.filled(
-              margin: const EdgeInsets.all(10),
-              elevation: 1,
-              surfaceTintColor: Theme.of(context)
-                  .colorScheme
-                  .primary
-                  .harmonizeWith(Colors.white),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context, 
-                    MaterialPageRoute(builder: (context) => const SecondRoute())
-                  );
-                },
-                child: Column(
-                  children: [
-                    Expanded(
+    return Scrollbar(
+      thickness: 10,
+      radius: const Radius.circular(5),
+      child: GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount:
+          MediaQuery.of(context).size.shortestSide < 600 ? 2 : 4),itemCount: classes.length,
+        itemBuilder: (BuildContext context, classroom) {
+          return Card(
+            margin: const EdgeInsets.all(10),
+            elevation: 1,
+            surfaceTintColor:
+                Theme.of(context).colorScheme.primary.harmonizeWith(Colors.white),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const ThirdRoute()));
+              },
+              child: Column(
+                children: [
+                  Expanded(
                       child: FittedBox(
-                      fit: BoxFit.fill,
-                      child: Icon(Icons.groups, color: Theme.of(context).colorScheme.outline),
-                    )),
-                    Center(child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Text(classroom)),
-                    ),
-                  ],
-                ))
-            )
-        ],
+                    fit: BoxFit.fill,
+                    child: Icon(Icons.groups,
+                        color: Theme.of(context).colorScheme.outline),
+                  )),
+                  Center(
+                    child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Text(classes[classroom])),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
