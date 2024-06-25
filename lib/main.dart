@@ -109,10 +109,16 @@ class SignOutButton extends StatelessWidget {
                 .colorScheme
                 .outline), // Text color based on dark or light mode
       ),
-      onPressed: () => FirebaseUIAuth.signOut(
-        context: context,
-        auth: auth,
-      ),
+      onPressed: () {
+        Navigator.push(
+          context, MaterialPageRoute<FirstRoute>(builder: (context) => const FirstRoute(),
+          ),
+        );
+        FirebaseUIAuth.signOut(
+          context: context,
+          auth: auth,
+        );
+      },
     );
   }
 }
