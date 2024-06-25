@@ -34,10 +34,13 @@ class _StudentListState extends State<StudentList> {
       'Daniel Cooper',
     ];
 
-    return Scaffold(
-      body: ListView(children: <Widget>[
-      for (var student in students)
-        Padding(
+    return Scrollbar(
+      thickness: 10,
+      radius: const Radius.circular(5),
+      child: ListView.builder(
+        itemCount: students.length,
+        itemBuilder: (BuildContext context, student) {
+          return Padding(
             padding: const EdgeInsets.all(2.0),
             child: Card(
               surfaceTintColor: Theme.of(context)
@@ -45,11 +48,15 @@ class _StudentListState extends State<StudentList> {
                   .primary
                   .harmonizeWith(Colors.white),
               child: ListTile(
-                title: Text(student), // Display student name
-                trailing: const PresenceSelector(), // Dislay presence selector
+                title: Text(students[student]), // Display student name
+                trailing:
+                    const PresenceSelector(), // Dislay presence selector
               ),
-            ))
-    ]));
+            ),
+          );
+        },
+      ),
+    );
   }
 }
 
@@ -75,7 +82,6 @@ class _PresenceSelectorState extends State<PresenceSelector> {
         ButtonSegment<Presence>(
           value: Presence.present,
           label: Text('Present'),
-          
         ),
         ButtonSegment<Presence>(
           value: Presence.late,
@@ -88,9 +94,11 @@ class _PresenceSelectorState extends State<PresenceSelector> {
       ],
       selected: <Presence>{presenceView}, // Selected presence
       onSelectionChanged: (Set<Presence> newSelection) {
-        setState(() {
-          presenceView = newSelection.first; // Updates presence for selected
-        });
+        setState(
+          () {
+            presenceView = newSelection.first; // Updates presence for selected
+          },
+        );
       },
     );
   }
