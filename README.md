@@ -67,7 +67,7 @@ flutter pub add (package_name)
 ```
 - Flutter package [dynamic_color: ^1.7.0](https://pub.dev/packages/dynamic_color)
 
-- Flutter package [firebase_code: ^3.1.0](https://pub.dev/packages/firebase_core)
+- Flutter package [firebase_core: ^3.1.0](https://pub.dev/packages/firebase_core)
 
 - Flutter package [firebase_auth: ^5.1.0](https://pub.dev/packages/firebase_auth)
 
