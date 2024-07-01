@@ -1,6 +1,6 @@
 # school_role
 
-school_role is a versatile project designed for teachers to take the role. This comprehensive guide will provide you with everything you need to know to get started with the project, from installation instructions to a detailed description of its features.
+"school_role" is a versatile project designed for teachers to take the role. This comprehensive guide will provide you with everything you need to know to get started with the project, from installation instructions to a detailed description of its features.
 
 ## Table of Contents
 
@@ -11,6 +11,8 @@ school_role is a versatile project designed for teachers to take the role. This 
   - [Prerequisites](#prerequisites)
 
   - [Clone the Repository](#clone-the-repository)
+  - [Requisites](#requisites)
+  - [Firebase Setup](#firebase-setup)
 
   - [Build and Run](#build-and-run)
 
@@ -44,8 +46,6 @@ Before you begin, ensure you have the following dependencies and tools installed
 
 - Vscode [Dart Extension](https://marketplace.visualstudio.com/items?itemName=Dart-Code.dart-code)
 
-- Flutter package [dynamic_color: ^1.7.0](https://pub.dev/packages/dynamic_color)
-
 
 ### Clone the Repository
 
@@ -58,6 +58,33 @@ git clone https://github.com/lachlk/school_role.git
 ```
 
    Replace lachlk with your GitHub username.
+
+### Requisites
+
+Ensure these packages are installed by running:
+```
+flutter pub add (package_name)
+```
+- Flutter package [dynamic_color: ^1.7.0](https://pub.dev/packages/dynamic_color)
+
+- Flutter package [firebase_code: ^3.1.0](https://pub.dev/packages/firebase_core)
+
+- Flutter package [firebase_auth: ^5.1.0](https://pub.dev/packages/firebase_auth)
+
+- Flutter package [firebase_ui_auth: ^1.15.0](https://pub.dev/packages/firebase_ui_auth)
+
+- Flutter package [google_sign_in: ^6.2.1](https://pub.dev/packages/google_sign_in)
+
+- Flutter package [firebase_ui_oauth_google: ^1.3.3](https://pub.dev/packages/firebase_ui_oauth_google)
+
+### Firebase Setup
+1. Go to [firebase.google.com](https://firebase.google.com/)
+2. Click on go to console
+3. Add projecta and follow the instructions
+4. In project overview under "Get started by adding Firebase to your app" Click on the flutter logo
+5. Follow the firebase provided instructions
+
+If you need more help I recommend this [tutorial](https://firebase.google.com/docs/flutter/setup?platform=ios)
 
 ### Build and Run
 
