@@ -13,6 +13,7 @@
   - [Clone the Repository](#clone-the-repository)
   - [Requisites](#requisites)
   - [Firebase Setup](#firebase-setup)
+  - [Firebase Auth Setup](#firebase-auth-setup)
 
   - [Build and Run](#build-and-run)
 
@@ -85,6 +86,16 @@ flutter pub add (package_name)
 5. Follow the firebase provided instructions
 
 If you need more help I recommend this [tutorial](https://firebase.google.com/docs/flutter/setup?platform=ios)
+
+### Firebase Auth Setup
+1. Click on build then the authentication tab
+2. Click "get started" then "Email/Password"
+3. Enable Email/Password
+4. Click on "Add new provider" then "Google" 
+5. Enable Google and fill in "Support email for project"
+6. Click save then hover over the google and click on "edit configuration"
+7. Under Web SDK configuration copy the Web client ID
+8. In the auth_gate.dart file replace the GoogleProvider(clientId: "My ID") with your Web client ID
 
 ### Build and Run
 
