@@ -21,36 +21,36 @@ void main() async {
 }
 
 class FirstRoute extends StatelessWidget {
-  const FirstRoute({super.key});
+  const FirstRoute({super.key}); // First route for page navigation
 
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      appBar: MyAppBar(), // Setting MyAppBar as home widget
+      appBar: MyAppBar(), // Setting MyAppBar as appBar widget
       body: AuthGate(), // Setting AuthGate as body
     );
   }
 }
 
 class SecondRoute extends StatelessWidget {
-  const SecondRoute({super.key});
+  const SecondRoute({super.key}); // Second route for page navigation
 
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: ClassesList(),
+      body: ClassesList(), // Setting ClassesList as body
     );
   }
 }
 
 class ThirdRoute extends StatelessWidget {
-  const ThirdRoute({super.key});
+  const ThirdRoute({super.key}); // Third route for page navigation
 
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      appBar: MyAppBar(),
-      body: StudentList(),
+      appBar: MyAppBar(), // Setting MyAppBar as appBar widget
+      body: StudentList(), // Setting StudentList as body
     );
   }
 }
@@ -110,11 +110,11 @@ class SignOutButton extends StatelessWidget {
                 .outline), // Text color based on dark or light mode
       ),
       onPressed: () {
-        Navigator.push(
+        Navigator.push( // When pressed runs FirstRoute
           context, MaterialPageRoute<FirstRoute>(builder: (context) => const FirstRoute(),
           ),
         );
-        FirebaseUIAuth.signOut(
+        FirebaseUIAuth.signOut( // Firebase auth signs user out
           context: context,
           auth: auth,
         );
