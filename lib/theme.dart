@@ -26,22 +26,22 @@ class DynamicTheme extends StatelessWidget {
           darkColorTheme =
               darkDynamic.harmonized(); // Harmonizes dark color theme
           darkColorTheme = darkColorTheme.copyWith(
-              outline: Colors.grey,
+              outline: Colors.white,
               secondary: _brandColor); // Customizing dark color theme
         } else {
           lightColorTheme = ColorScheme.fromSeed(
               seedColor: _brandColor, outline: Colors.black);
           darkColorTheme = ColorScheme.fromSeed(
             seedColor: _brandColor,
-            outline: Colors.grey,
+            outline: Colors.white,
             brightness: Brightness.dark,
           );
         }
 
         return MaterialApp(
           theme: ThemeData(
-            colorScheme: lightColorTheme, // Applying light color theme
             useMaterial3: true,
+            colorScheme: lightColorTheme, // Applying light color theme
           ),
           darkTheme: ThemeData(
             useMaterial3: true,
