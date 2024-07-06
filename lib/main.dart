@@ -26,7 +26,9 @@ class FirstRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      appBar: MyAppBar(), // Setting MyAppBar as appBar widget
+      appBar: MyAppBar(
+        onBackTap: null,
+      ), // Setting MyAppBar as appBar widget
       body: AuthGate(), // Setting AuthGate as body
     );
   }
@@ -48,15 +50,25 @@ class ThirdRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      appBar: MyAppBar(), // Setting MyAppBar as appBar widget
-      body: StudentList(), // Setting StudentList as body
+    
+    return Scaffold(
+      appBar: MyAppBar(
+        onBackTap: () {
+          Navigator.pop(
+            context, MaterialPageRoute<FirstRoute>(builder: (context) => const ThirdRoute(),
+            ),
+          );
+        }
+      ), // Setting MyAppBar as appBar widget
+      body: const StudentList(), // Setting StudentList as body
     );
   }
 }
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const MyAppBar({super.key}); // MyAppBar widget for app header
+  final dynamic onBackTap;
+
+  const MyAppBar({super.key, required this.onBackTap}); // MyAppBar widget for app header
 
   @override
   Size get preferredSize => const Size.fromHeight(100);
@@ -72,11 +84,9 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
               bottomLeft: Radius.circular(20),
               bottomRight: Radius.circular(20))), // Custom shape for appbar
       leading: IconButton(
-        icon: const Icon(Icons.more_horiz),
-        onPressed: () {},
-        color: Theme.of(context)
-            .colorScheme
-            .outline, // Icon color based on dark or light mode
+        icon: const Icon(Icons.arrow_back),
+        onPressed: onBackTap,
+        color: Theme.of(context).colorScheme.outline, // Icon color based on dark or light mode
       ),
       actions: const [
         Padding(padding: EdgeInsets.only(right: 10.0), child: SignOutButton()),
@@ -105,9 +115,7 @@ class SignOutButton extends StatelessWidget {
       child: Text(
         "sign out",
         style: TextStyle(
-            color: Theme.of(context)
-                .colorScheme
-                .outline), // Text color based on dark or light mode
+            color: Theme.of(context).colorScheme.outline), // Text color based on dark or light mode
       ),
       onPressed: () {
         Navigator.push( // When pressed runs FirstRoute
