@@ -117,16 +117,31 @@ class SignOutButton extends StatelessWidget {
         style: TextStyle(
             color: Theme.of(context).colorScheme.outline), // Text color based on dark or light mode
       ),
-      onPressed: () {
-        Navigator.push( // When pressed runs FirstRoute
-          context, MaterialPageRoute<FirstRoute>(builder: (context) => const FirstRoute(),
-          ),
-        );
-        FirebaseUIAuth.signOut( // Firebase auth signs user out
-          context: context,
-          auth: auth,
-        );
-      },
+      onPressed: () => showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Do you want to sign out?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'Cancel'),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.push( // When pressed runs FirstRoute
+                context, MaterialPageRoute<FirstRoute>(builder: (context) => const FirstRoute(),
+                ),
+              );
+                FirebaseUIAuth.signOut( // Firebase auth signs user out
+                context: context,
+                auth: auth,
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
