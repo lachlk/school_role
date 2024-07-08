@@ -14,9 +14,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(
-    const DynamicTheme(
-      home: FirstRoute(),
-    ),
+    const DynamicTheme(),
   ); // Start of the application
 }
 
@@ -50,16 +48,15 @@ class ThirdRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
-      appBar: MyAppBar(
-        onBackTap: () {
-          Navigator.pop(
-            context, MaterialPageRoute<FirstRoute>(builder: (context) => const ThirdRoute(),
-            ),
-          );
-        }
-      ), // Setting MyAppBar as appBar widget
+      appBar: MyAppBar(onBackTap: () {
+        Navigator.pop(
+          context,
+          MaterialPageRoute<FirstRoute>(
+            builder: (context) => const ThirdRoute(),
+          ),
+        );
+      }), // Setting MyAppBar as appBar widget
       body: const StudentList(), // Setting StudentList as body
     );
   }
@@ -68,7 +65,8 @@ class ThirdRoute extends StatelessWidget {
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   final dynamic onBackTap;
 
-  const MyAppBar({super.key, required this.onBackTap}); // MyAppBar widget for app header
+  const MyAppBar(
+      {super.key, required this.onBackTap}); // MyAppBar widget for app header
 
   @override
   Size get preferredSize => const Size.fromHeight(100);
@@ -80,13 +78,17 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       shadowColor: Colors.black, // Shadow color
       toolbarHeight: 80, // Height of the app bar
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(20),
-              bottomRight: Radius.circular(20))), // Custom shape for appbar
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(20),
+          bottomRight: Radius.circular(20),
+        ),
+      ), // Custom shape for appbar
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
         onPressed: onBackTap,
-        color: Theme.of(context).colorScheme.outline, // Icon color based on dark or light mode
+        color: Theme.of(context)
+            .colorScheme
+            .outline, // Icon color based on dark or light mode
       ),
       actions: const [
         Padding(padding: EdgeInsets.only(right: 10.0), child: SignOutButton()),
@@ -115,7 +117,9 @@ class SignOutButton extends StatelessWidget {
       child: Text(
         "sign out",
         style: TextStyle(
-            color: Theme.of(context).colorScheme.outline), // Text color based on dark or light mode
+            color: Theme.of(context)
+                .colorScheme
+                .outline), // Text color based on dark or light mode
       ),
       onPressed: () => showDialog<String>(
         context: context,
@@ -128,13 +132,17 @@ class SignOutButton extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                Navigator.push( // When pressed runs FirstRoute
-                context, MaterialPageRoute<FirstRoute>(builder: (context) => const FirstRoute(),
-                ),
-              );
-                FirebaseUIAuth.signOut( // Firebase auth signs user out
-                context: context,
-                auth: auth,
+                Navigator.push(
+                  // When pressed runs FirstRoute
+                  context,
+                  MaterialPageRoute<FirstRoute>(
+                    builder: (context) => const FirstRoute(),
+                  ),
+                );
+                FirebaseUIAuth.signOut(
+                  // Firebase auth signs user out
+                  context: context,
+                  auth: auth,
                 );
               },
               child: const Text('OK'),

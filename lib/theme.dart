@@ -5,8 +5,7 @@ import 'package:school_role/main.dart';// Imports the required packages and file
 const _brandColor = Colors.grey; // The primary color
 
 class DynamicTheme extends StatelessWidget {
-  const DynamicTheme(
-      {super.key, required FirstRoute home});
+  const DynamicTheme({super.key});
 
   @override
   Widget build(BuildContext context) {
