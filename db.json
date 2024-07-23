@@ -1,0 +1,24 @@
+{
+    "users": {
+        "U1234": {
+            "email": "example@gmail.com"
+        }
+    },
+    "classes": {
+        "C4321": {
+            "name": "Math",
+            "userID": "U1234"
+        }
+    },
+    "students": {
+        "S5643": {
+            "name": "Bob John", 
+            "presence": "present"
+        }
+    },
+    "enrolment": {
+        "E4321": {
+            "student": "S5643"
+        }
+    }
+}
