@@ -51,6 +51,10 @@ class AuthGate extends StatelessWidget {
            },
           );
         }
+        if (FirebaseAuth.instance.currentUser != null) {
+          print('userID:');
+          print(FirebaseAuth.instance.currentUser?.uid);
+        }
 
         return const SecondRoute(); // Returns SecondRoute after authentication
       },

@@ -17,8 +17,9 @@
         }
     },
     "enrolment": {
-        "E4321": {
-            "student": "S5643"
+        "C4321_S5643": {
+            "classID": "C4321",
+            "studentID": "S5643"
         }
     }
 }
