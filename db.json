@@ -7,19 +7,24 @@
     "classes": {
         "C4321": {
             "name": "Math",
-            "userID": "U1234"
+            "userID": [
+                "U1234"
+            ]
         }
     },
     "students": {
         "S5643": {
-            "name": "Bob John", 
-            "presence": "present"
+            "name": "Bob John"
         }
     },
-    "enrolment": {
-        "C4321_S5643": {
+    "attendance": {
+        "DocID": {
             "classID": "C4321",
-            "studentID": "S5643"
+            "timestamp": "time...",
+            "attendance": {
+                "studentID": "late"
+            }
         }
     }
+
 }
