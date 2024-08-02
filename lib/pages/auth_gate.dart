@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:firebase_ui_oauth_google/firebase_ui_oauth_google.dart';
 import 'package:flutter/material.dart';
-import 'package:school_role/main.dart'; // Imports required packages
+import 'package:school_role/main.dart';// Imports required packages
 
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key}); // AuthGate widget for pages body
@@ -51,12 +51,10 @@ class AuthGate extends StatelessWidget {
            },
           );
         }
-        if (FirebaseAuth.instance.currentUser != null) {
-          print('userID:');
-          print(FirebaseAuth.instance.currentUser?.uid);
-        }
 
-        return const SecondRoute(); // Returns SecondRoute after authentication
+        String uID = FirebaseAuth.instance.currentUser!.uid;
+
+        return SecondRoute(uID: uID); // Returns SecondRoute after authentication
       },
     );
   }
