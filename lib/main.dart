@@ -33,18 +33,22 @@ class FirstRoute extends StatelessWidget {
 }
 
 class SecondRoute extends StatelessWidget {
-  const SecondRoute({super.key}); // Second route for page navigation
+  final String uID;
+
+  const SecondRoute({super.key, required this.uID}); // Second route for page navigation
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: ClassesList(), // Setting ClassesList as body
+    return Scaffold(
+      body: ClassesList(uID: uID), // Setting ClassesList as body
     );
   }
 }
 
 class ThirdRoute extends StatelessWidget {
-  const ThirdRoute({super.key}); // Third route for page navigation
+  final String classID;
+
+  const ThirdRoute({super.key, required this.classID}); // Third route for page navigation
 
   @override
   Widget build(BuildContext context) {
@@ -53,11 +57,11 @@ class ThirdRoute extends StatelessWidget {
         Navigator.pop(
           context,
           MaterialPageRoute<FirstRoute>(
-            builder: (context) => const ThirdRoute(),
+            builder: (context) => ThirdRoute(classID: classID,),
           ),
         );
       }), // Setting MyAppBar as appBar widget
-      body: const StudentList(), // Setting StudentList as body
+      body: StudentList(classID: classID), // Setting StudentList as body
     );
   }
 }
