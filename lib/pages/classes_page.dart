@@ -4,14 +4,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:school_role/main.dart'; // Imports required packages and pages
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 
-class DatabaseService {
+class ClassesDatabaseService {
   final FirebaseAuth auth = FirebaseAuth.instance;
 
-  Future<List<String>> getClassList() async {
+  Future<List<String>> getClassList(uID) async {
+    
     List<String> classes = [];
     final QuerySnapshot result = await FirebaseFirestore.instance
         .collection('classes')
-        .where('userID', isEqualTo: auth.currentUser?.uid)
+        .where('userID', arrayContains: uID)
         .get();
 
     for (var eachResult in result.docs) {
@@ -22,7 +23,9 @@ class DatabaseService {
 }
 
 class ClassesList extends StatefulWidget {
-  const ClassesList({super.key});
+  final String uID;
+
+  const ClassesList({super.key, required this.uID});
 
   @override
   State<ClassesList> createState() => _ClassesListState();
@@ -34,7 +37,7 @@ class _ClassesListState extends State<ClassesList> {
   @override
   void initState() {
     super.initState();
-    futureClasses = DatabaseService().getClassList();
+    futureClasses = ClassesDatabaseService().getClassList(widget.uID);
   }
 
   @override
@@ -60,7 +63,7 @@ class _ClassesListState extends State<ClassesList> {
                       MediaQuery.of(context).size.shortestSide < 600 ? 2 : 4),
               itemCount: classes.length,
               itemBuilder: (BuildContext context, int index) {
-                var className = classes[index];
+                String className = classes[index];
                 return Card(
                   // Card for the packground of each class
                   margin: const EdgeInsets.all(10),
@@ -71,13 +74,26 @@ class _ClassesListState extends State<ClassesList> {
                       .harmonizeWith(Colors.white),
                   child: GestureDetector(
                     // Detects clicking of the card
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ThirdRoute(),
-                        ),
-                      );
+                    onTap: () async {
+                      final QuerySnapshot classSnapshot = await FirebaseFirestore.instance
+                        .collection('classes')
+                        .where('userID', arrayContains: widget.uID)
+                        .where('name', isEqualTo: className)
+                        .get();
+
+                      if (classSnapshot.docs.isNotEmpty) {
+
+                        String classID = classSnapshot.docs.first.id;
+
+                        if (context.mounted) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ThirdRoute(classID: classID),
+                            ),
+                          );
+                        }
+                      }
                     },
                     child: Column(
                       children: [
