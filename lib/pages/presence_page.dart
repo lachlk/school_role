@@ -45,9 +45,7 @@ class StudentsDatabaseService extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 class StudentList extends StatefulWidget {
