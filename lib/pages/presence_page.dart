@@ -1,61 +1,112 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
-// ignore: unused_import
-import 'package:school_role/main.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 
-class StudentList extends StatefulWidget {
-  const StudentList({super.key}); // Student list widget
+class StudentsDatabaseService extends StatelessWidget {
+  StudentsDatabaseService({super.key});
+
+  final FirebaseAuth auth = FirebaseAuth.instance;
+
+  Future<List<String>> getStudentIDList(String classID) async {
+    List<String> studentIDs = [];
+
+    final QuerySnapshot result = await FirebaseFirestore.instance
+        .collection('attendance')
+        .where('classID', isEqualTo: classID)
+        .get();
+
+    for (var eachResult in result.docs) {
+      Map<String, dynamic> presence = eachResult.get('presence');
+      presence.forEach((key, value) {
+        if (!studentIDs.contains(key)) {
+          studentIDs.add(key);
+        }
+      });
+    }
+    return studentIDs;
+  }
+
+  Future<List<String>> getStudentList(String classID) async {
+    List<String> studentIDs = await getStudentIDList(classID);
+    List<String> students = [];
+
+    for (var studentID in studentIDs) {
+      final QuerySnapshot result = await FirebaseFirestore.instance
+          .collection('students')
+          .where(FieldPath.documentId, isEqualTo: studentID)
+          .get();
+  
+      for (var eachResult in result.docs) {
+        students.add(eachResult.get('name') as String);
+      }
+    }
+    return students;
+  }
 
   @override
-  State<StudentList> createState() =>
-      _StudentListState(); // Creats state for student list
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+
+class StudentList extends StatefulWidget {
+  final String classID;
+
+  const StudentList({super.key, required this.classID}); // Student list widget
+
+  @override
+  State<StudentList> createState() => _StudentListState(); // Creats state for student list
 }
 
 class _StudentListState extends State<StudentList> {
-  @override
-  Widget build(BuildContext context) {
-    var students = [
-      // List of student names
-      'Emily Harrison',
-      'Jacob Martinez',
-      'Olivia Thompson',
-      'Ethan Rodriguez',
-      'Sophia Carter',
-      'Noah Sullivan',
-      'Ava Murphy',
-      'Liam Bennett',
-      'Mia Rivera',
-      'Benjamin Foster',
-      'Charlotte Davis',
-      'James Wilson',
-      'Isabella Moore',
-      'Michael Turner',
-      'Grace Anderson',
-      'Daniel Cooper',
-    ];
+  late Future<List<String>> futureStudents;
 
-    return Scrollbar(
-      thickness: 10,
-      radius: const Radius.circular(5),
-      child: ListView.builder(
-        itemCount: students.length,
-        itemBuilder: (BuildContext context, student) {
-          return Padding(
-            padding: const EdgeInsets.all(2.0),
-            child: Card(
-              surfaceTintColor: Theme.of(context)
-                  .colorScheme
-                  .primary
-                  .harmonizeWith(Colors.white),
-              child: ListTile(
-                title: Text(students[student]), // Display student name
-                trailing:
-                    const PresenceSelector(), // Dislay presence selector
-              ),
+  @override
+  void initState() {
+    super.initState();
+    futureStudents = StudentsDatabaseService().getStudentList(widget.classID);
+  }
+
+  @override
+
+  Widget build(BuildContext context) {
+    return FutureBuilder<List>(
+      future: futureStudents,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return const Center(child: Text('Error loading students'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No students found'));
+        } else {
+          var students = snapshot.data!;
+          return Scrollbar(
+            thickness: 10,
+            radius: const Radius.circular(5),
+            child: ListView.builder(
+              itemCount: students.length,
+              itemBuilder: (BuildContext context, student) {
+                return Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: Card(
+                    surfaceTintColor: Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .harmonizeWith(Colors.white),
+                    child: ListTile(
+                      title: Text(students[student]), // Display student name
+                      trailing:
+                          const PresenceSelector(), // Dislay presence selector
+                    ),
+                  ),
+                );
+              },
             ),
           );
-        },
-      ),
+        }
+      }
     );
   }
 }
