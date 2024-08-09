@@ -15,7 +15,6 @@ class StudentsDatabaseService extends StatelessWidget {
         .where('classID', isEqualTo: classID)
         .get();
 
-    debugPrint('test');
     for (var eachResult in result.docs) {
       final presence = eachResult.get('presence');
       studentIDs.addAll(presence);
