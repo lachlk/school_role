@@ -8,33 +8,28 @@ class StudentsDatabaseService extends StatelessWidget {
 
   final FirebaseAuth auth = FirebaseAuth.instance;
 
-  Future<List<String>> getStudentIDList(String classID) async {
-    List<String> studentIDs = [];
-
+  Future<Map<String, dynamic>> getStudentIDList(String classID) async {
+    Map<String, dynamic> studentIDs = {};
     final QuerySnapshot result = await FirebaseFirestore.instance
         .collection('attendance')
         .where('classID', isEqualTo: classID)
         .get();
 
+    debugPrint('test');
     for (var eachResult in result.docs) {
-      Map<String, dynamic> presence = eachResult.get('presence');
-      presence.forEach((key, value) {
-        if (!studentIDs.contains(key)) {
-          studentIDs.add(key);
-        }
-      });
+      final presence = eachResult.get('presence');
+      studentIDs.addAll(presence);
     }
     return studentIDs;
   }
 
   Future<List<String>> getStudentList(String classID) async {
-    List<String> studentIDs = await getStudentIDList(classID);
+    Map<String, dynamic> studentIDs = await getStudentIDList(classID);
     List<String> students = [];
-
-    for (var studentID in studentIDs) {
+    for (var key in studentIDs.keys) {
       final QuerySnapshot result = await FirebaseFirestore.instance
           .collection('students')
-          .where(FieldPath.documentId, isEqualTo: studentID)
+          .where(FieldPath.documentId, isEqualTo: key)
           .get();
   
       for (var eachResult in result.docs) {
