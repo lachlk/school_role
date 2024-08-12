@@ -10,6 +10,7 @@ class StudentsDatabaseService extends StatelessWidget {
 
   Future<Map<String, dynamic>> getStudentIDList(String classID) async {
     Map<String, dynamic> studentIDs = {};
+
     final QuerySnapshot result = await FirebaseFirestore.instance
         .collection('attendance')
         .where('classID', isEqualTo: classID)
@@ -24,18 +25,14 @@ class StudentsDatabaseService extends StatelessWidget {
 
   Future<List<String>> getStudentList(String classID) async {
     Map<String, dynamic> studentIDs = await getStudentIDList(classID);
-    List<String> students = [];
-    for (var key in studentIDs.keys) {
-      final QuerySnapshot result = await FirebaseFirestore.instance
-          .collection('students')
-          .where(FieldPath.documentId, isEqualTo: key)
-          .get();
-  
-      for (var eachResult in result.docs) {
-        students.add(eachResult.get('name') as String);
-      }
-    }
-    return students;
+    if (studentIDs.isEmpty) return [];
+
+    final QuerySnapshot result = await FirebaseFirestore.instance
+        .collection('students')
+        .where(FieldPath.documentId, whereIn: studentIDs.keys.toList())
+        .get();
+    
+    return result.docs.map((doc) => doc.get('name') as String).toList();
   }
 
   @override
