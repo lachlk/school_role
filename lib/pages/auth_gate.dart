@@ -41,11 +41,11 @@ class AuthGate extends StatelessWidget {
              );
            },
            sideBuilder: (context, shrinkOffset) { // Builds the contents that goes to the left of the auth
-             return Padding(
-               padding: const EdgeInsets.all(20),
+             return const Padding(
+               padding: EdgeInsets.all(20),
                child: AspectRatio(
                  aspectRatio: 1,
-                 child: Image.asset('flutterfire_300x.png'), // Temporary img from tutorial
+                 child: FittedBox(child: Icon(Icons.library_books)), // Temporary img from tutorial
                ),
              );
            },
