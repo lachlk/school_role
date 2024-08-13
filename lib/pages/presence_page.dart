@@ -8,8 +8,8 @@ class StudentsDatabaseService extends StatelessWidget {
 
   final FirebaseAuth auth = FirebaseAuth.instance;
 
-  Future<Map<String, String>> getStudentIDList(String classID) async {
-    Map<String, String> studentIDs = {};
+  Future<Map<String, dynamic>> getStudentIDList(String classID) async {
+    Map<String, dynamic> studentIDs = {};
 
     final QuerySnapshot result = await FirebaseFirestore.instance
         .collection('attendance')
@@ -24,7 +24,7 @@ class StudentsDatabaseService extends StatelessWidget {
   }
 
   Future<List<Map<String, String>>> getStudentList(String classID) async {
-    Map<String, String> studentIDs = await getStudentIDList(classID);
+    Map<String, dynamic> studentIDs = await getStudentIDList(classID);
     if (studentIDs.isEmpty) return [];
 
     final QuerySnapshot result = await FirebaseFirestore.instance
