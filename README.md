@@ -14,6 +14,7 @@
   - [Requisites](#requisites)
   - [Firebase Setup](#firebase-setup)
   - [Firebase Auth Setup](#firebase-auth-setup)
+  - [Firebase:Firestore Database Setup](#firebasefirestore-database-setup)
 
   - [Build and Run](#build-and-run)
 
@@ -96,6 +97,12 @@ If you need more help I recommend this [tutorial](https://firebase.google.com/do
 6. Click save then hover over the google and click on "edit configuration"
 7. Under Web SDK configuration copy the Web client ID
 8. In the auth_gate.dart file replace the GoogleProvider(clientId: "My ID") with your Web client ID
+
+### Firebase:Firestore database Setup
+1. Click "Create database"
+2. Start in **production mode** then "Create"
+3. Using the database structure in the [db.json](db.json) file create collentions and documents
+4. In the "Rules" tab copy and paste the securty rules in the [db_security_rules.txt](db_security_rules.txt)
 
 ### Build and Run
 
