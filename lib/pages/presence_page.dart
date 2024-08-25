@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 
-class StudentsDatabaseService extends StatelessWidget {
+class StudentsDatabaseService extends StatelessWidget {// Query's student Ids and Presences in class
   StudentsDatabaseService({super.key});
 
   final FirebaseAuth auth = FirebaseAuth.instance;
@@ -23,7 +23,7 @@ class StudentsDatabaseService extends StatelessWidget {
     return studentIDs;
   }
 
-  Future<List<Map<String, String>>> getStudentList(String classID) async {
+  Future<List<Map<String, String>>> getStudentList(String classID) async {// Query's the students names that match id
     Map<String, dynamic> studentIDs = await getStudentIDList(classID);
     if (studentIDs.isEmpty) return [];
 

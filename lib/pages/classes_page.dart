@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:school_role/main.dart'; // Imports required packages and pages
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 
-class ClassesDatabaseService {
+class ClassesDatabaseService {// Query's class names
   final FirebaseAuth auth = FirebaseAuth.instance;
 
   Future<List<String>> getClassList(uID) async {
@@ -74,7 +74,7 @@ class _ClassesListState extends State<ClassesList> {
                       .harmonizeWith(Colors.white),
                   child: GestureDetector(
                     // Detects clicking of the card
-                    onTap: () async {
+                    onTap: () async {// Query's docID that matches selected name
                       final QuerySnapshot classSnapshot = await FirebaseFirestore.instance
                         .collection('classes')
                         .where('userID', arrayContains: widget.uID)
@@ -83,12 +83,12 @@ class _ClassesListState extends State<ClassesList> {
 
                       if (classSnapshot.docs.isNotEmpty) {
 
-                        String classID = classSnapshot.docs.first.id;
+                        String classID = classSnapshot.docs.first.id;//Saves docID as variable
 
                         if (context.mounted) {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
+                            MaterialPageRoute(//  passes classID through route
                               builder: (context) => ThirdRoute(classID: classID),
                             ),
                           );
