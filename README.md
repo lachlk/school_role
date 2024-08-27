@@ -121,6 +121,7 @@ flutter build
 This will build the project and install it on your connected device or emulator.
 
 ## Usage
+Currently writing to a database hasn't been implemented this means you need to manually add classes and students to the firebase database, however, if your a teacher grading my work I will make sure to provide you with a login. Please check eigther the classroom or the "Final Project page" if you cannot find the login please email me. The login email will be my school email.
 
 1. To run current version on Android, Windows or Web go to [releases](https://github.com/lachlk/school_role/releases).
 
