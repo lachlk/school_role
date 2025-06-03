@@ -110,6 +110,7 @@ class _ClassesListState extends State<ClassesList> {
                             child: Text(className),
                           ),
                         ),
+                        FloatingActionButton(onPressed: () {}, backgroundColor: Theme.of(context).colorScheme.primary,)
                       ],
                     ),
                   ),

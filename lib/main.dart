@@ -90,9 +90,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
         onPressed: onBackTap,
-        color: Theme.of(context)
-            .colorScheme
-            .outline, // Icon color based on dark or light mode
+        color: Theme.of(context).colorScheme.outline, // Icon color based on dark or light mode
       ),
       actions: const [
         Padding(padding: EdgeInsets.only(right: 10.0), child: SignOutButton()),
