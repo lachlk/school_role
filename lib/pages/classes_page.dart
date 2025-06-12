@@ -42,83 +42,90 @@ class _ClassesListState extends State<ClassesList> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<String>>(
-      future: futureClasses,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return const Center(child: Text('Error loading classes'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No classes found'));
-        } else {
-          var classes = snapshot.data!;
-          return Scrollbar(
-            // Widget for scrollbar
-            thickness: 10,
-            radius: const Radius.circular(5),
-            child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount:
-                      MediaQuery.of(context).size.shortestSide < 600 ? 2 : 4),
-              itemCount: classes.length,
-              itemBuilder: (BuildContext context, int index) {
-                String className = classes[index];
-                return Card(
-                  // Card for the packground of each class
-                  margin: const EdgeInsets.all(10),
-                  elevation: 1,
-                  surfaceTintColor: Theme.of(context)
-                      .colorScheme
-                      .primary
-                      .harmonizeWith(Colors.white),
-                  child: GestureDetector(
-                    // Detects clicking of the card
-                    onTap: () async {
-                      final QuerySnapshot classSnapshot = await FirebaseFirestore.instance
-                        .collection('classes')
-                        .where('userID', arrayContains: widget.uID)
-                        .where('name', isEqualTo: className)
-                        .get();
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {}, // Floating action button for future use
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        child: const Icon(Icons.add),
+      ),
+      body: FutureBuilder<List<String>>(
+        future: futureClasses,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return const Center(child: Text('Error loading classes'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No classes found'));
+          } else {
+            var classes = snapshot.data!;
+            return Scrollbar(// Widget for scrollbar
+              thickness: 10,
+              radius: const Radius.circular(5),
+              child: GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount:
+                        MediaQuery.of(context).size.shortestSide < 600 ? 2 : 4),
+                itemCount: classes.length,
+                itemBuilder: (BuildContext context, int index) {
+                  String className = classes[index];
+                  return Card(
+                    // Card for the packground of each class
+                    margin: const EdgeInsets.all(10),
+                    elevation: 1,
+                    surfaceTintColor: Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .harmonizeWith(Colors.white),
+                    child: GestureDetector(
+                      // Detects clicking of the card
+                      onTap: () async {
+                        final QuerySnapshot classSnapshot = await FirebaseFirestore.instance
+                          .collection('classes')
+                          .where('userID', arrayContains: widget.uID)
+                          .where('name', isEqualTo: className)
+                          .get();
 
-                      if (classSnapshot.docs.isNotEmpty) {
+                        if (classSnapshot.docs.isNotEmpty) {
 
-                        String classID = classSnapshot.docs.first.id;
+                          String classID = classSnapshot.docs.first.id;
 
-                        if (context.mounted) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ThirdRoute(classID: classID),
-                            ),
-                          );
+                          if (context.mounted) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ThirdRoute(classID: classID),
+                              ),
+                            );
+                          }
                         }
-                      }
-                    },
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: FittedBox(
-                            fit: BoxFit.fill,
-                            child: Icon(Icons.groups,
-                                color: Theme.of(context).colorScheme.outline),
+                      },
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: FittedBox(
+                              fit: BoxFit.fill,
+                              child: Icon(Icons.groups,
+                                  color: Theme.of(context).colorScheme.outline),
+                            ),
                           ),
-                        ),
-                        Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Text(className),
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Text(className),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
-          );
-        }
-      },
+                  );
+                },
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 }
