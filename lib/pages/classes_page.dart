@@ -65,6 +65,7 @@ class _ClassesListState extends State<ClassesList> {
                     ),
                   ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       TextButton(
                         child: const Text("Submit"),
