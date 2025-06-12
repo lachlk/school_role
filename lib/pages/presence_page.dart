@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 
-class StudentsDatabaseService extends StatelessWidget {
+class StudentsDatabaseService extends StatelessWidget {// Query's student Ids and Presences in class
   StudentsDatabaseService({super.key});
 
   final FirebaseAuth auth = FirebaseAuth.instance;
 
   Future<Map<String, dynamic>> getStudentIDList(String classID) async {
     Map<String, dynamic> studentIDs = {};
+
     final QuerySnapshot result = await FirebaseFirestore.instance
         .collection('attendance')
         .where('classID', isEqualTo: classID)
@@ -22,20 +23,21 @@ class StudentsDatabaseService extends StatelessWidget {
     return studentIDs;
   }
 
-  Future<List<String>> getStudentList(String classID) async {
+  Future<List<Map<String, String>>> getStudentList(String classID) async {// Query's the students names that match id
     Map<String, dynamic> studentIDs = await getStudentIDList(classID);
-    List<String> students = [];
-    for (var key in studentIDs.keys) {
-      final QuerySnapshot result = await FirebaseFirestore.instance
-          .collection('students')
-          .where(FieldPath.documentId, isEqualTo: key)
-          .get();
-  
-      for (var eachResult in result.docs) {
-        students.add(eachResult.get('name') as String);
-      }
-    }
-    return students;
+    if (studentIDs.isEmpty) return [];
+
+    final QuerySnapshot result = await FirebaseFirestore.instance
+        .collection('students')
+        .where(FieldPath.documentId, whereIn: studentIDs.keys.toList())
+        .get();
+    
+    return result.docs.map((doc) {
+      return {
+        'name': doc.get('name') as String,
+        'presence': studentIDs[doc.id] as String,
+      };
+    }).toList();
   }
 
   @override
@@ -52,7 +54,7 @@ class StudentList extends StatefulWidget {
 }
 
 class _StudentListState extends State<StudentList> {
-  late Future<List<String>> futureStudents;
+  late Future<List<Map<String, String>>> futureStudents;
 
   @override
   void initState() {
@@ -63,7 +65,7 @@ class _StudentListState extends State<StudentList> {
   @override
 
   Widget build(BuildContext context) {
-    return FutureBuilder<List>(
+    return FutureBuilder<List<Map<String, String>>>(
       future: futureStudents,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -79,7 +81,9 @@ class _StudentListState extends State<StudentList> {
             radius: const Radius.circular(5),
             child: ListView.builder(
               itemCount: students.length,
-              itemBuilder: (BuildContext context, student) {
+              itemBuilder: (BuildContext context, index) {
+                String studentName = students[index]['name']!;
+                String selectedPresence = students[index]['presence']!;
                 return Padding(
                   padding: const EdgeInsets.all(2.0),
                   child: Card(
@@ -88,9 +92,9 @@ class _StudentListState extends State<StudentList> {
                         .primary
                         .harmonizeWith(Colors.white),
                     child: ListTile(
-                      title: Text(students[student]), // Display student name
+                      title: Text(studentName), // Display student name
                       trailing:
-                          const PresenceSelector(), // Dislay presence selector
+                        PresenceSelector(selectedPresece: selectedPresence), // Dislay presence selector
                     ),
                   ),
                 );
@@ -103,10 +107,17 @@ class _StudentListState extends State<StudentList> {
   }
 }
 
-enum Presence { present, late, absent } // Values for presence status
+enum Presence {
+  present('present'), late('late'), absent('absent');
+
+  const Presence(this.value);
+  final String value;
+} // Values for presence status
 
 class PresenceSelector extends StatefulWidget {
-  const PresenceSelector({super.key}); // Presence selector widget
+  final String selectedPresece;
+  
+  const PresenceSelector({super.key, required this.selectedPresece}); // Presence selector widget
 
   @override
   State<PresenceSelector> createState() =>
@@ -114,7 +125,8 @@ class PresenceSelector extends StatefulWidget {
 }
 
 class _PresenceSelectorState extends State<PresenceSelector> {
-  Presence presenceView = Presence.absent; // Defualt status
+  // Presence presenceView = Presence.absent; // Defualt status
+  late Presence presenceView = Presence.values.byName(widget.selectedPresece);
 
   @override
   Widget build(BuildContext context) {

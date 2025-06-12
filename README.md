@@ -14,6 +14,7 @@
   - [Requisites](#requisites)
   - [Firebase Setup](#firebase-setup)
   - [Firebase Auth Setup](#firebase-auth-setup)
+  - [Firebase:Firestore Database Setup](#firebasefirestore-database-setup)
 
   - [Build and Run](#build-and-run)
 
@@ -97,6 +98,12 @@ If you need more help I recommend this [tutorial](https://firebase.google.com/do
 7. Under Web SDK configuration copy the Web client ID
 8. In the auth_gate.dart file replace the GoogleProvider(clientId: "My ID") with your Web client ID
 
+### Firebase:Firestore database Setup
+1. Click "Create database"
+2. Start in **production mode** then "Create"
+3. Using the database structure in the [db.json](db.json) file create collentions and documents
+4. In the "Rules" tab copy and paste the securty rules in the [db_security_rules.txt](db_security_rules.txt)
+
 ### Build and Run
 
 1. Connect your device or start an emulator.
@@ -114,6 +121,7 @@ flutter build
 This will build the project and install it on your connected device or emulator.
 
 ## Usage
+Currently writing to a database hasn't been implemented this means you need to manually add classes and students to the firebase database, however, if your a teacher grading my work I will make sure to provide you with a login. Please check eigther the classroom or the "Final Project page" if you cannot find the login please email me. The login email will be my school email.
 
 1. To run current version on Android, Windows or Web go to [releases](https://github.com/lachlk/school_role/releases).
 
