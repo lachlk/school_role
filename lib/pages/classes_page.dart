@@ -1,16 +1,18 @@
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:school_role/main.dart'; // Imports required packages and pages
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 
-class ClassesDatabaseService {
+class FirebaseService {
   final FirebaseAuth auth = FirebaseAuth.instance;
+  final db = FirebaseFirestore.instance;
 
   Future<List<String>> getClassList(uID) async {
     
     List<String> classes = [];
-    final QuerySnapshot result = await FirebaseFirestore.instance
+    final QuerySnapshot result = await db
         .collection('classes')
         .where('userID', arrayContains: uID)
         .get();
@@ -19,6 +21,14 @@ class ClassesDatabaseService {
       classes.add(eachResult.get('name') as String);
     }
     return classes;
+  }
+
+  Future<void> addClass(String name, String uID) async {
+    final data = {
+      'name': name,
+      'userID': [uID],
+    };
+    await db.collection('classes').add(data);
   }
 }
 
@@ -37,51 +47,63 @@ class _ClassesListState extends State<ClassesList> {
   @override
   void initState() {
     super.initState();
-    futureClasses = ClassesDatabaseService().getClassList(widget.uID);
+    futureClasses = FirebaseService().getClassList(widget.uID);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () => showModalBottomSheet(
-          context: context,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-          ),
-          builder: (BuildContext context) {
-            return Container(
-              padding: const EdgeInsets.all(16),
-              height: 200,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  TextField(
-                    decoration: InputDecoration(
-                      labelText: 'Class Name',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+        onPressed: () {
+          final TextEditingController controller = TextEditingController();
+
+          showModalBottomSheet(
+            context: context,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            builder: (BuildContext context) {
+              return Container(
+                padding: const EdgeInsets.all(16),
+                height: 200,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    TextField(
+                      controller: controller,
+                      decoration: InputDecoration(
+                        labelText: 'Class Name',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                     ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton(
-                        child: const Text("Submit"),
-                        onPressed: () {},
-                      ),
-                      TextButton(
-                        child: const Text("Close"),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          },
-        ), // Floating action button for future use
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextButton(
+                          child: const Text("Submit"),
+                          onPressed: () async {
+                            final name = controller.text.trim();
+                            FirebaseService().addClass(name, widget.uID);
+                            setState(() {
+                              futureClasses = FirebaseService().getClassList(widget.uID);
+                            });
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        TextButton(
+                          child: const Text("Close"),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          ); // Floating action button for future use
+        },
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
         child: const Icon(Icons.add),
