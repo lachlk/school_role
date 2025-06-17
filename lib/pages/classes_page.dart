@@ -1,5 +1,4 @@
 import 'package:dynamic_color/dynamic_color.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:school_role/main.dart'; // Imports required packages and pages
@@ -81,17 +80,20 @@ class _ClassesListState extends State<ClassesList> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        TextButton(
-                          child: const Text("Submit"),
-                          onPressed: () async {
-                            final name = controller.text.trim();
-                            FirebaseService().addClass(name, widget.uID);
-                            setState(() {
-                              futureClasses = FirebaseService().getClassList(widget.uID);
-                            });
-                            Navigator.of(context).pop();
-                          },
-                        ),
+                        ValueListenableBuilder(valueListenable: controller, builder: (context, value, child) {
+                          final isEnabled = value.text.isNotEmpty;
+                          return TextButton(
+                            onPressed: isEnabled ? () async {
+                              final name = controller.text.trim();
+                              FirebaseService().addClass(name, widget.uID);
+                              setState(() {
+                                futureClasses = FirebaseService().getClassList(widget.uID);
+                              });
+                              Navigator.of(context).pop();
+                            } : null,
+                            child: const Text("Submit"),
+                          );
+                        }),
                         TextButton(
                           child: const Text("Close"),
                           onPressed: () => Navigator.of(context).pop(),
