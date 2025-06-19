@@ -8,17 +8,16 @@ class FirebaseService {
   final FirebaseAuth auth = FirebaseAuth.instance;
   final db = FirebaseFirestore.instance;
 
-  Future<List<String>> getClassList(String uID) async {
-    List<String> classes = [];
+  Future<List<Map<String, String>>> getClassList(String uID) async {
     final QuerySnapshot result = await db
         .collection('classes')
         .where('userID', arrayContains: uID)
         .get();
 
-    for (var eachResult in result.docs) {
-      classes.add(eachResult.get('name') as String);
-    }
-    return classes;
+    return result.docs.map((doc) => {
+      'id': doc.id,
+      'name': doc.get('name') as String,
+    }).toList();
   }
 
   Future<void> addClass(String name, String uID) async {
@@ -27,6 +26,10 @@ class FirebaseService {
       'userID': [uID],
     };
     await db.collection('classes').add(data);
+  }
+
+  Future<void> deleteClass(String classID) async {
+    await db.collection('classes').doc(classID).delete();
   }
 }
 
@@ -40,7 +43,7 @@ class ClassesList extends StatefulWidget {
 }
 
 class _ClassesListState extends State<ClassesList> {
-  late Future<List<String>> futureClasses;
+  late Future<List<Map<String, String>>> futureClasses;
 
   @override
   void initState() {
@@ -116,7 +119,7 @@ class _ClassesListState extends State<ClassesList> {
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
         child: const Icon(Icons.add),
       ),
-      body: FutureBuilder<List<String>>(
+      body: FutureBuilder<List<Map<String, String>>>(
         future: futureClasses,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -137,32 +140,21 @@ class _ClassesListState extends State<ClassesList> {
                         MediaQuery.of(context).size.shortestSide < 600 ? 2 : 4),
                 itemCount: classes.length,
                 itemBuilder: (BuildContext context, int index) {
-                  String className = classes[index];
+                  final classItem = classes[index];
+                  final className = classItem['name']!;
+                  final classID = classItem['id']!;
                   return Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: GestureDetector(
                       // Detects clicking of the card
                       onTap: () async {
-                        final QuerySnapshot classSnapshot =
-                            await FirebaseFirestore.instance
-                                .collection('classes')
-                                .where('userID', arrayContains: widget.uID)
-                                .where('name', isEqualTo: className)
-                                .get();
-
-                        if (classSnapshot.docs.isNotEmpty) {
-                          String classID = classSnapshot.docs.first.id;
-
-                          if (context.mounted) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ThirdRoute(classID: classID),
-                              ),
-                            );
-                          }
-                        }
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ThirdRoute(classID: classID),
+                          ),
+                        );
                       },
                       child: Material(
                         borderRadius: BorderRadius.circular(10),
@@ -174,9 +166,14 @@ class _ClassesListState extends State<ClassesList> {
                         child: GridTile(
                           header: Align(
                             alignment: Alignment.topRight,
-                            child: IconButton(
-                              onPressed: () {},
-                              icon: Icon(Icons.more_vert),
+                            child: CascadingMenu(
+                              classID: classID,
+                              onDelete: () {
+                                setState(() {
+                                  futureClasses = FirebaseService()
+                                      .getClassList(widget.uID);
+                                });
+                              },
                             ),
                           ),
                           footer: GridTileBar(
@@ -206,3 +203,67 @@ class _ClassesListState extends State<ClassesList> {
     );
   }
 }
+
+class CascadingMenu extends StatefulWidget {
+  final String classID;
+  final VoidCallback onDelete;
+  const CascadingMenu({super.key, required this.classID, required this.onDelete});
+
+  @override
+  State<CascadingMenu> createState() => _CascadingMenuState();
+}
+
+class _CascadingMenuState extends State<CascadingMenu> {
+  @override
+  Widget build(BuildContext context) {
+    return MenuAnchor(
+      menuChildren: [
+        MenuItemButton(
+          leadingIcon: const Icon(Icons.delete),
+          onPressed: () => showDialog(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('Delete Class'),
+              content: const Text('Are you sure you want to delete this class?'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    FirebaseService().deleteClass(widget.classID);
+                    widget.onDelete();
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Delete'),
+                ),
+              ],
+            ),
+          ),
+          child: Text('Delete'),
+        ),
+        const MenuItemButton(
+          leadingIcon: Icon(Icons.adjust),
+          onPressed: null,
+          child: Text('Move'),
+        ),
+      ],
+      builder: (context, controller, child) =>
+          IconButton(
+            icon: Icon(Icons.more_vert),
+            onPressed: () {
+              if (controller.isOpen) {
+                controller.close();
+              } else {
+                controller.open();
+              }
+            },
+            color: Theme.of(context).colorScheme.outline, // Icon color based on dark or light mode
+          ),
+    );
+  }
+}
+
