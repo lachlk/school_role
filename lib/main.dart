@@ -24,9 +24,6 @@ class FirstRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      appBar: MyAppBar(
-        onBackTap: null,
-      ), // Setting MyAppBar as appBar widget
       body: AuthGate(), // Setting AuthGate as body
     );
   }
@@ -40,6 +37,9 @@ class SecondRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: MyAppBar(
+        onBackTap: null,
+      ), // Setting MyAppBar as appBar widget
       body: ClassesList(uID: uID), // Setting ClassesList as body
     );
   }
@@ -117,7 +117,7 @@ class SignOutButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       child: Text(
-        "sign out",
+        "Sign Out",
         style: TextStyle(
             color: Theme.of(context)
                 .colorScheme
