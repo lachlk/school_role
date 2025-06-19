@@ -8,8 +8,7 @@ class FirebaseService {
   final FirebaseAuth auth = FirebaseAuth.instance;
   final db = FirebaseFirestore.instance;
 
-  Future<List<String>> getClassList(uID) async {
-    
+  Future<List<String>> getClassList(String uID) async {
     List<String> classes = [];
     final QuerySnapshot result = await db
         .collection('classes')
@@ -80,23 +79,30 @@ class _ClassesListState extends State<ClassesList> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        ValueListenableBuilder(valueListenable: controller, builder: (context, value, child) {
-                          final isEnabled = value.text.isNotEmpty;
-                          return TextButton(
-                            onPressed: isEnabled ? () async {
-                              final name = controller.text.trim();
-                              FirebaseService().addClass(name, widget.uID);
-                              setState(() {
-                                futureClasses = FirebaseService().getClassList(widget.uID);
-                              });
-                              Navigator.of(context).pop();
-                            } : null,
-                            child: const Text("Submit"),
-                          );
-                        }),
                         TextButton(
                           child: const Text("Close"),
                           onPressed: () => Navigator.of(context).pop(),
+                        ),
+                        ValueListenableBuilder(
+                          valueListenable: controller,
+                          builder: (context, value, child) {
+                            final isEnabled = value.text.isNotEmpty;
+                            return TextButton(
+                              onPressed: isEnabled
+                                  ? () async {
+                                      final name = controller.text.trim();
+                                      FirebaseService()
+                                          .addClass(name, widget.uID);
+                                      setState(() {
+                                        futureClasses = FirebaseService()
+                                            .getClassList(widget.uID);
+                                      });
+                                      Navigator.of(context).pop();
+                                    }
+                                  : null,
+                              child: const Text("Submit"),
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -121,7 +127,8 @@ class _ClassesListState extends State<ClassesList> {
             return const Center(child: Text('No classes found'));
           } else {
             var classes = snapshot.data!;
-            return Scrollbar(// Widget for scrollbar
+            return Scrollbar(
+              // Widget for scrollbar
               thickness: 10,
               radius: const Radius.circular(5),
               child: GridView.builder(
@@ -131,53 +138,62 @@ class _ClassesListState extends State<ClassesList> {
                 itemCount: classes.length,
                 itemBuilder: (BuildContext context, int index) {
                   String className = classes[index];
-                  return Card(
-                    // Card for the packground of each class
-                    margin: const EdgeInsets.all(10),
-                    elevation: 1,
-                    surfaceTintColor: Theme.of(context)
-                        .colorScheme
-                        .primary
-                        .harmonizeWith(Colors.white),
+                  return Padding(
+                    padding: const EdgeInsets.all(10.0),
                     child: GestureDetector(
                       // Detects clicking of the card
                       onTap: () async {
-                        final QuerySnapshot classSnapshot = await FirebaseFirestore.instance
-                          .collection('classes')
-                          .where('userID', arrayContains: widget.uID)
-                          .where('name', isEqualTo: className)
-                          .get();
+                        final QuerySnapshot classSnapshot =
+                            await FirebaseFirestore.instance
+                                .collection('classes')
+                                .where('userID', arrayContains: widget.uID)
+                                .where('name', isEqualTo: className)
+                                .get();
 
                         if (classSnapshot.docs.isNotEmpty) {
-
                           String classID = classSnapshot.docs.first.id;
 
                           if (context.mounted) {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ThirdRoute(classID: classID),
+                                builder: (context) =>
+                                    ThirdRoute(classID: classID),
                               ),
                             );
                           }
                         }
                       },
-                      child: Column(
-                        children: [
-                          Expanded(
+                      child: Material(
+                        borderRadius: BorderRadius.circular(10),
+                        elevation: 1,
+                        surfaceTintColor: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .harmonizeWith(Colors.white),
+                        child: GridTile(
+                          header: Align(
+                            alignment: Alignment.topRight,
+                            child: IconButton(
+                              onPressed: () {},
+                              icon: Icon(Icons.more_vert),
+                            ),
+                          ),
+                          footer: GridTileBar(
+                            title: Text(
+                              className,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
                             child: FittedBox(
-                              fit: BoxFit.fill,
+                              fit: BoxFit.contain,
                               child: Icon(Icons.groups,
                                   color: Theme.of(context).colorScheme.outline),
                             ),
                           ),
-                          Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Text(className),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   );
