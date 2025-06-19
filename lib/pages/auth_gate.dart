@@ -45,7 +45,7 @@ class AuthGate extends StatelessWidget {
                padding: EdgeInsets.all(20),
                child: AspectRatio(
                  aspectRatio: 1,
-                 child: FittedBox(child: Icon(Icons.library_books)), // Temporary img from tutorial
+                 child: FittedBox(child: Icon(Icons.local_library)), // Temporary img from tutorial
                ),
              );
            },
