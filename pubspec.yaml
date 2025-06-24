@@ -24,6 +24,7 @@ dependencies:
   firebase_ui_oauth_google: ^1.3.3
   cloud_firestore: ^5.1.0
   material_color_utilities: ^0.11.1
+  flutter_draggable_gridview: ^0.0.13
 dev_dependencies:
   flutter_test:
     sdk: flutter

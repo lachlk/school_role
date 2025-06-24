@@ -64,53 +64,14 @@ class _ClassesListState extends State<ClassesList> {
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
             builder: (BuildContext context) {
-              return Container(
-                padding: const EdgeInsets.all(16),
-                height: 200,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    TextField(
-                      controller: controller,
-                      decoration: InputDecoration(
-                        labelText: 'Class Name',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton(
-                          child: const Text("Close"),
-                          onPressed: () => Navigator.of(context).pop(),
-                        ),
-                        ValueListenableBuilder(
-                          valueListenable: controller,
-                          builder: (context, value, child) {
-                            final isEnabled = value.text.isNotEmpty;
-                            return TextButton(
-                              onPressed: isEnabled
-                                  ? () async {
-                                      final name = controller.text.trim();
-                                      FirebaseService()
-                                          .addClass(name, widget.uID);
-                                      setState(() {
-                                        futureClasses = FirebaseService()
-                                            .getClassList(widget.uID);
-                                      });
-                                      Navigator.of(context).pop();
-                                    }
-                                  : null,
-                              child: const Text("Submit"),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+              return ClassBottomSheet(
+                uID: widget.uID,
+                controller: controller,
+                onGetClasses: () {
+                  setState(() {
+                    futureClasses = FirebaseService().getClassList(widget.uID);
+                  });
+                },
               );
             },
           ); // Floating action button for future use
@@ -143,62 +104,151 @@ class _ClassesListState extends State<ClassesList> {
                   final classItem = classes[index];
                   final className = classItem['name']!;
                   final classID = classItem['id']!;
-                  return Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: GestureDetector(
-                      // Detects clicking of the card
-                      onTap: () async {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ThirdRoute(classID: classID),
-                          ),
-                        );
-                      },
-                      child: Material(
-                        borderRadius: BorderRadius.circular(10),
-                        elevation: 1,
-                        surfaceTintColor: Theme.of(context)
-                            .colorScheme
-                            .primary
-                            .harmonizeWith(Colors.white),
-                        child: GridTile(
-                          header: Align(
-                            alignment: Alignment.topRight,
-                            child: CascadingMenu(
-                              classID: classID,
-                              onDelete: () {
-                                setState(() {
-                                  futureClasses = FirebaseService()
-                                      .getClassList(widget.uID);
-                                });
-                              },
-                            ),
-                          ),
-                          footer: GridTileBar(
-                            title: Text(
-                              className,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: FittedBox(
-                              fit: BoxFit.contain,
-                              child: Icon(Icons.groups,
-                                  color: Theme.of(context).colorScheme.outline),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                  return ClassGridTile(
+                    key: ValueKey(classID),
+                    className: className,
+                    classID: classID,
+                    uID: widget.uID,
+                    onDelete: () {
+                      setState(() {
+                        futureClasses = FirebaseService()
+                            .getClassList(widget.uID);
+                      });
+                    },
                   );
                 },
               ),
             );
           }
         },
+      ),
+    );
+  }
+}
+
+class ClassGridTile extends StatefulWidget {
+  const ClassGridTile({super.key, required this.className, required this.classID, required this.uID, this.onDelete});
+  final String className;
+  final String classID;
+  final String uID;
+  final VoidCallback? onDelete;
+
+  @override
+  State<ClassGridTile> createState() => _ClassGridTileState();
+}
+
+class _ClassGridTileState extends State<ClassGridTile> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: GestureDetector(
+        // Detects clicking of the card
+        onTap: () async {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                ThirdRoute(classID: widget.classID),
+            ),
+          );
+        },
+        child: Material(
+          borderRadius: BorderRadius.circular(10),
+          elevation: 1,
+          surfaceTintColor: Theme.of(context)
+              .colorScheme
+              .primary
+              .harmonizeWith(Colors.white),
+          child: GridTile(
+            header: Align(
+              alignment: Alignment.topRight,
+              child: CascadingMenu(
+                classID: widget.classID,
+                onDelete: widget.onDelete ?? () {
+                  setState(() {
+                    FirebaseService().getClassList(widget.uID);
+                  });
+                },
+              ),
+            ),
+            footer: GridTileBar(
+              title: Text(
+                widget.className,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: Icon(Icons.groups,
+                    color: Theme.of(context).colorScheme.outline),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ClassBottomSheet extends StatefulWidget {
+  const ClassBottomSheet({super.key, required this.controller, required this.uID, required this.onGetClasses});
+  final String uID;
+  final TextEditingController controller;
+  final VoidCallback onGetClasses;
+
+  @override
+  State<ClassBottomSheet> createState() => _ClassBottomSheetState();
+}
+
+class _ClassBottomSheetState extends State<ClassBottomSheet> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      height: 200,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          TextField(
+            controller: widget.controller,
+            decoration: InputDecoration(
+              labelText: 'Class Name',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                child: const Text("Close"),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              ValueListenableBuilder<TextEditingValue>(
+                valueListenable: widget.controller,
+                builder: (context, value, child) {
+                  final isEnabled = value.text.isNotEmpty;
+                  return TextButton(
+                    onPressed: isEnabled
+                        ? () async {
+                            final name = widget.controller.text.trim();
+                            FirebaseService()
+                                .addClass(name, widget.uID);
+                            widget.onGetClasses();
+                            Navigator.of(context).pop();
+                          }
+                        : null,
+                    child: const Text("Submit"),
+                  );
+                },
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -266,4 +316,3 @@ class _CascadingMenuState extends State<CascadingMenu> {
     );
   }
 }
-

@@ -302,6 +302,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_draggable_gridview:
+    dependency: "direct main"
+    description:
+      name: flutter_draggable_gridview
+      sha256: "1b4b2ef5c0f6710a456ef75b69381a865c0d1ac8ca22ebc16f068c591dddf12f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.13"
   flutter_gen:
     dependency: "direct main"
     description:
