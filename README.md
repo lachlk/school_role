@@ -34,7 +34,7 @@ List the key features and functionalities of your project:
 
 - Feature 2: Dynamic coloring
 
-- Feature 3: Minimilist desighn
+- Feature 3: Minimilist design
 
 ## Installation
 
@@ -69,7 +69,7 @@ flutter pub add (package_name)
 ```
 - Flutter package [dynamic_color: ^1.7.0](https://pub.dev/packages/dynamic_color)
 
-- Flutter package [firebase_core: ^3.1.0](https://pub.dev/packages/firebase_core)
+- Flutter package [firebase_core: ^3.1.1](https://pub.dev/packages/firebase_core)
 
 - Flutter package [firebase_auth: ^5.1.0](https://pub.dev/packages/firebase_auth)
 
