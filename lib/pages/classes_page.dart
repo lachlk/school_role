@@ -2,6 +2,7 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:school_role/main.dart'; // Imports required packages and pages
+import 'package:flutter_draggable_gridview/flutter_draggable_gridview.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 
 class FirebaseService {
@@ -10,9 +11,9 @@ class FirebaseService {
 
   Future<List<Map<String, String>>> getClassList(String uID) async {
     final QuerySnapshot result = await db
-        .collection('classes')
-        .where('userID', arrayContains: uID)
-        .get();
+      .collection('classes')
+      .where('userID', arrayContains: uID)
+      .get();
 
     return result.docs.map((doc) => {
       'id': doc.id,
@@ -44,11 +45,33 @@ class ClassesList extends StatefulWidget {
 
 class _ClassesListState extends State<ClassesList> {
   late Future<List<Map<String, String>>> futureClasses;
+  List<DraggableGridItem> draggableItems = [];
 
   @override
   void initState() {
     super.initState();
     futureClasses = FirebaseService().getClassList(widget.uID);
+  }
+
+  void _buildDraggableItems(List<Map<String, String>> classes) {
+    draggableItems = classes.map((classItem) {
+      final className = classItem['name']!;
+      final classID = classItem['id']!;
+      return DraggableGridItem(
+        isDraggable: true,
+        child: ClassGridTile(
+          key: ValueKey(classID),
+          className: className,
+          classID: classID,
+          uID: widget.uID,
+          onDelete: () {
+            setState(() {
+              futureClasses = FirebaseService().getClassList(widget.uID);
+            });
+          },
+        ),
+      );
+    }).toList();
   }
 
   @override
@@ -57,7 +80,6 @@ class _ClassesListState extends State<ClassesList> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           final TextEditingController controller = TextEditingController();
-
           showModalBottomSheet(
             context: context,
             shape: const RoundedRectangleBorder(
@@ -90,33 +112,66 @@ class _ClassesListState extends State<ClassesList> {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text('No classes found'));
           } else {
-            var classes = snapshot.data!;
-            return Scrollbar(
-              // Widget for scrollbar
-              thickness: 10,
-              radius: const Radius.circular(5),
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount:
-                        MediaQuery.of(context).size.shortestSide < 600 ? 2 : 4),
-                itemCount: classes.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final classItem = classes[index];
-                  final className = classItem['name']!;
-                  final classID = classItem['id']!;
-                  return ClassGridTile(
-                    key: ValueKey(classID),
-                    className: className,
-                    classID: classID,
-                    uID: widget.uID,
-                    onDelete: () {
-                      setState(() {
-                        futureClasses = FirebaseService()
-                            .getClassList(widget.uID);
-                      });
-                    },
+            final classes = snapshot.data!;
+            if (draggableItems.isEmpty) {
+              _buildDraggableItems(classes);
+            }
+            return SafeArea(
+              child: Scrollbar(
+                // Widget for scrollbar
+                thickness: 10,
+                radius: const Radius.circular(5),
+                child: DraggableGridViewBuilder(
+                  scrollDirection: Axis.vertical,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: MediaQuery.of(context).size.shortestSide < 600 ? 2 : 4,
+                ),
+                dragCompletion: (List<DraggableGridItem> reorderedList, int beforeIndex, int afterIndex) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    setState(() {
+                      draggableItems = reorderedList;
+                    });
+                  });
+                },
+                children: draggableItems,
+                isOnlyLongPress: true,
+                dragPlaceHolder: (List<DraggableGridItem> list, int index) {
+                  return PlaceHolderWidget(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
                   );
                 },
+                dragFeedback: (list, index) {
+                  final child = list[index].child;
+                  if (child is ClassGridTile) {
+                    final tile = child;
+                    final crossAxisCount = MediaQuery.of(context).size.shortestSide < 600 ? 2 : 4;
+                    final tileSize = MediaQuery.of(context).size.width / crossAxisCount -20;
+                    return Material(
+                      color: Colors.transparent,
+                      child: Transform.scale(
+                        scale: 1.1,
+                        child: SizedBox(
+                          width: tileSize,
+                          height: tileSize,
+                          child: ClassGridTile(
+                            key: ValueKey('feedback-${tile.classID}'),
+                            className: tile.className,
+                            classID: tile.classID,
+                            uID: widget.uID,
+                          ),
+                        ),
+                      ),
+                    );
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                },
+                ),
               ),
             );
           }
@@ -155,11 +210,8 @@ class _ClassGridTileState extends State<ClassGridTile> {
         },
         child: Material(
           borderRadius: BorderRadius.circular(10),
-          elevation: 1,
-          surfaceTintColor: Theme.of(context)
-              .colorScheme
-              .primary
-              .harmonizeWith(Colors.white),
+          elevation: 2,
+          color: Theme.of(context).colorScheme.surfaceContainerHigh,
           child: GridTile(
             header: Align(
               alignment: Alignment.topRight,
@@ -175,6 +227,9 @@ class _ClassGridTileState extends State<ClassGridTile> {
             footer: GridTileBar(
               title: Text(
                 widget.className,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -183,7 +238,7 @@ class _ClassGridTileState extends State<ClassGridTile> {
               child: FittedBox(
                 fit: BoxFit.contain,
                 child: Icon(Icons.groups,
-                    color: Theme.of(context).colorScheme.outline),
+                    color: Theme.of(context).colorScheme.onSurface),
               ),
             ),
           ),
@@ -311,7 +366,7 @@ class _CascadingMenuState extends State<CascadingMenu> {
                 controller.open();
               }
             },
-            color: Theme.of(context).colorScheme.outline, // Icon color based on dark or light mode
+            color: Theme.of(context).colorScheme.onSurface, // Icon color based on dark or light mode
           ),
     );
   }
