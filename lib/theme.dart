@@ -22,20 +22,17 @@ class DynamicTheme extends StatelessWidget {
               final corePalette = snapshot.data!;
               lightColorTheme = ColorScheme.fromSeed(
                 seedColor: Color(corePalette.primary.get(40)),
-                outline: Colors.black,
               ).copyWith(secondary: Color(corePalette.secondary.get(40)));
 
               darkColorTheme = ColorScheme.fromSeed(
                 seedColor: Color(corePalette.primary.get(40)),
-                outline: Colors.white,
                 brightness: Brightness.dark,
               ).copyWith(secondary: Color(corePalette.secondary.get(40)));
             }else {
               lightColorTheme = ColorScheme.fromSeed(
-                  seedColor: _brandColor, outline: Colors.black);
+                seedColor: _brandColor, outline: Colors.black);
               darkColorTheme = ColorScheme.fromSeed(
                 seedColor: _brandColor,
-                outline: Colors.white,
                 brightness: Brightness.dark,
               );
             }

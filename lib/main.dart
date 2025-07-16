@@ -1,3 +1,4 @@
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:school_role/firebase_options.dart';
@@ -78,7 +79,8 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      elevation: 2, // Shadow elevation
+      elevation: 3, // Shadow elevation
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest, // App bar color based on dark or light mode
       shadowColor: Colors.black, // Shadow color
       toolbarHeight: 80, // Height of the app bar
       shape: const RoundedRectangleBorder(
@@ -90,7 +92,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
         onPressed: onBackTap,
-        color: Theme.of(context).colorScheme.outline, // Icon color based on dark or light mode
+        color: Theme.of(context).colorScheme.onSurface, // Icon color based on dark or light mode
       ),
       actions: const [
         Padding(padding: EdgeInsets.only(right: 10.0), child: SignOutButton()),
@@ -116,12 +118,15 @@ class SignOutButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ),
       child: Text(
         "Sign Out",
         style: TextStyle(
             color: Theme.of(context)
                 .colorScheme
-                .outline), // Text color based on dark or light mode
+                .onPrimary), // Text color based on dark or light mode
       ),
       onPressed: () => showDialog<String>(
         context: context,
