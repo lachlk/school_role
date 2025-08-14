@@ -1,4 +1,3 @@
-import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:school_role/main.dart'; // Imports required packages and pages
@@ -13,6 +12,7 @@ class FirebaseService {
     final QuerySnapshot result = await db
       .collection('classes')
       .where('userID', arrayContains: uID)
+      .orderBy('order')
       .get();
 
     return result.docs.map((doc) => {
@@ -22,9 +22,17 @@ class FirebaseService {
   }
 
   Future<void> addClass(String name, String uID) async {
+    final classes = await db
+      .collection('classes')
+      .where('userID', arrayContains: uID)
+      .get();
+
+    final newOrder = classes.size;
+
     final data = {
       'name': name,
       'userID': [uID],
+      'order': newOrder,
     };
     await db.collection('classes').add(data);
   }
@@ -46,61 +54,67 @@ class ClassesList extends StatefulWidget {
 class _ClassesListState extends State<ClassesList> {
   late Future<List<Map<String, String>>> futureClasses;
   List<DraggableGridItem> draggableItems = [];
+  late final ScrollController scrollController;
 
   @override
   void initState() {
     super.initState();
+    scrollController = ScrollController();
     futureClasses = FirebaseService().getClassList(widget.uID);
   }
 
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
+
+  void refreshClasses() {
+  setState(() {
+    draggableItems.clear();
+    futureClasses = FirebaseService().getClassList(widget.uID);
+  });
+}
+
   void _buildDraggableItems(List<Map<String, String>> classes) {
-    draggableItems = classes.map((classItem) {
-      final className = classItem['name']!;
-      final classID = classItem['id']!;
-      return DraggableGridItem(
+    draggableItems = classes
+      .map((classItem) => DraggableGridItem(
         isDraggable: true,
         child: ClassGridTile(
-          key: ValueKey(classID),
-          className: className,
-          classID: classID,
+          className: classItem['name'] ?? 'Unnamed',
+          classID: classItem['id']!,
+          onDelete: refreshClasses,
           uID: widget.uID,
-          onDelete: () {
-            setState(() {
-              futureClasses = FirebaseService().getClassList(widget.uID);
-            });
-          },
         ),
-      );
-    }).toList();
+      ),
+    ).toList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          final TextEditingController controller = TextEditingController();
-          showModalBottomSheet(
-            context: context,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            ),
-            builder: (BuildContext context) {
-              return ClassBottomSheet(
-                uID: widget.uID,
-                controller: controller,
-                onGetClasses: () {
-                  setState(() {
-                    futureClasses = FirebaseService().getClassList(widget.uID);
-                  });
-                },
-              );
-            },
-          ); // Floating action button for future use
-        },
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadiusGeometry.all(Radius.circular(20)),
+        ),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
         child: const Icon(Icons.add),
+        onPressed: () async {
+          final shouldRefresh = await showModalBottomSheet<bool>(
+            context: context,
+            isScrollControlled: true,
+            builder: (context) => ClassBottomSheet(
+              uID: widget.uID,
+              controller: TextEditingController(),  
+              onGetClasses: refreshClasses,
+            ),
+          );
+
+          if (shouldRefresh == true) {
+            refreshClasses();
+          }
+        },
       ),
       body: FutureBuilder<List<Map<String, String>>>(
         future: futureClasses,
@@ -108,7 +122,7 @@ class _ClassesListState extends State<ClassesList> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return const Center(child: Text('Error loading classes'));
+            return Center(child: Text('Error loading classes: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text('No classes found'));
           } else {
@@ -119,58 +133,68 @@ class _ClassesListState extends State<ClassesList> {
             return SafeArea(
               child: Scrollbar(
                 // Widget for scrollbar
+                controller: scrollController,
                 thickness: 10,
                 radius: const Radius.circular(5),
                 child: DraggableGridViewBuilder(
+                  controller: scrollController,
                   scrollDirection: Axis.vertical,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: MediaQuery.of(context).size.shortestSide < 600 ? 2 : 4,
-                ),
-                dragCompletion: (List<DraggableGridItem> reorderedList, int beforeIndex, int afterIndex) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                  ),
+                  dragCompletion: (reorderedList, int beforeIndex, int afterIndex) async {
                     setState(() {
                       draggableItems = reorderedList;
                     });
-                  });
-                },
-                children: draggableItems,
-                isOnlyLongPress: true,
-                dragPlaceHolder: (List<DraggableGridItem> list, int index) {
-                  return PlaceHolderWidget(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  );
-                },
-                dragFeedback: (list, index) {
-                  final child = list[index].child;
-                  if (child is ClassGridTile) {
-                    final tile = child;
-                    final crossAxisCount = MediaQuery.of(context).size.shortestSide < 600 ? 2 : 4;
-                    final tileSize = MediaQuery.of(context).size.width / crossAxisCount -20;
-                    return Material(
-                      color: Colors.transparent,
-                      child: Transform.scale(
-                        scale: 1.1,
-                        child: SizedBox(
-                          width: tileSize,
-                          height: tileSize,
-                          child: ClassGridTile(
-                            key: ValueKey('feedback-${tile.classID}'),
-                            className: tile.className,
-                            classID: tile.classID,
-                            uID: widget.uID,
-                          ),
+
+                    WriteBatch batch = FirebaseFirestore.instance.batch();
+                    for (int i = 0; i < draggableItems.length; i++) {
+                      final classTile = draggableItems[i].child as ClassGridTile;
+                      final classDocRef = FirebaseFirestore.instance
+                        .collection('classes')
+                        .doc(classTile.classID);
+                      batch.update(classDocRef, {'order': i});
+                    }
+                    await batch.commit();
+                  },
+                  children: draggableItems,
+                  isOnlyLongPress: true,
+                  dragPlaceHolder: (List<DraggableGridItem> list, int index) {
+                    return PlaceHolderWidget(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                       ),
                     );
-                  } else {
-                    return const SizedBox.shrink();
-                  }
-                },
+                  },
+                  dragFeedback: (list, index) {
+                    final child = list[index].child;
+                    if (child is ClassGridTile) {
+                      final tile = child;
+                      final crossAxisCount = MediaQuery.of(context).size.shortestSide < 600 ? 2 : 4;
+                      final tileSize = MediaQuery.of(context).size.width / crossAxisCount -20;
+                      return Material(
+                        color: Colors.transparent,
+                        child: Transform.scale(
+                          scale: 1.1,
+                          child: SizedBox(
+                            width: tileSize,
+                            height: tileSize,
+                            child: ClassGridTile(
+                              key: ValueKey('feedback-${tile.classID}'),
+                              className: tile.className,
+                              classID: tile.classID,
+                              uID: widget.uID,
+                            ),
+                          ),
+                        ),
+                      );
+                    } else {
+                      return const SizedBox.shrink();
+                    }
+                  },
                 ),
               ),
             );
@@ -289,14 +313,13 @@ class _ClassBottomSheetState extends State<ClassBottomSheet> {
                   final isEnabled = value.text.isNotEmpty;
                   return TextButton(
                     onPressed: isEnabled
-                        ? () async {
-                            final name = widget.controller.text.trim();
-                            FirebaseService()
-                                .addClass(name, widget.uID);
-                            widget.onGetClasses();
-                            Navigator.of(context).pop();
-                          }
-                        : null,
+                      ? () async {
+                        final name = widget.controller.text.trim();
+                        await FirebaseService().addClass(name, widget.uID);
+                        widget.onGetClasses();
+                        Navigator.of(context).pop(true);
+                      }
+                      : null,
                     child: const Text("Submit"),
                   );
                 },
