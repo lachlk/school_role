@@ -1,5 +1,5 @@
 name: school_role
-description: "A new Flutter project."
+description: "A Flutter application for taking attendance and managing classes."
 
 # Prevent accidental publishing to pub.dev.
 publish_to: 'none'
@@ -10,7 +10,7 @@ environment:
   sdk: ^3.9.0
 
 dependencies:
-  dynamic_color: ^1.7.0
+  dynamic_color: ^1.8.1
   firebase_auth: ^6.0.1
   firebase_core: ^4.0.0
   firebase_ui_auth: ^3.0.0
@@ -20,7 +20,7 @@ dependencies:
     sdk: flutter
 
   flutter_gen: any
-  google_sign_in: ^6.2.1
+  google_sign_in: ^6.3.0
   firebase_ui_oauth_google: ^2.0.0
   cloud_firestore: ^6.0.0
   material_color_utilities: ^0.11.1
