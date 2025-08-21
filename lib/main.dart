@@ -23,32 +23,31 @@ class FirstRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: AuthGate(), // Setting AuthGate as body
-    );
+    return AuthGate(); // Setting AuthGate as body
   }
 }
 
 class SecondRoute extends StatelessWidget {
-  final String uID;
+  const SecondRoute({
+    super.key,
+    required this.uID,
+  }); // Second route for page navigation
 
-  const SecondRoute({super.key, required this.uID}); // Second route for page navigation
+  final String uID;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: MyAppBar(
-        onBackTap: null,
-      ), // Setting MyAppBar as appBar widget
-      body: ClassesList(uID: uID), // Setting ClassesList as body
-    );
+    return ClassesPage(uID: uID);
   }
 }
 
 class ThirdRoute extends StatelessWidget {
-  final String classID;
+  const ThirdRoute({
+    super.key,
+    required this.classID
+  }); // Third route for page navigation
 
-  const ThirdRoute({super.key, required this.classID}); // Third route for page navigation
+  final String classID;
 
   @override
   Widget build(BuildContext context) {

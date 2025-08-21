@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_role/services/class_service.dart';
-import 'package:school_role/widgets/weekday_selector.dart';
+import 'package:school_role/widgets/class_page_widgets/weekday_selector.dart';
 
 class ClassBottomSheet extends StatefulWidget {
   const ClassBottomSheet({
