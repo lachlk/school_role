@@ -9,15 +9,19 @@ class ClassGridTile extends StatelessWidget {
     required this.className,
     required this.classID,
     required this.uID,
+    required this.onRefresh,
+    required this.classService,
     required this.onDelete,
-    required this.classService
+    required this.onUpdate,
   });
 
   final String className;
   final String classID;
   final String uID;
   final ClassService classService;
+  final VoidCallback onRefresh;
   final VoidCallback? onDelete;
+  final void Function(String classId, String newName) onUpdate;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +49,8 @@ class ClassGridTile extends StatelessWidget {
                 classID: classID,
                 classService: classService,
                 onDelete: onDelete ?? () {},
+                onRefresh: onRefresh,
+                onUpdate: onUpdate,
               ),
             ),
             footer: GridTileBar(
@@ -61,7 +67,7 @@ class ClassGridTile extends StatelessWidget {
               child: FittedBox(
                 fit: BoxFit.contain,
                 child: Icon(Icons.groups,
-                    color: Theme.of(context).colorScheme.onSurface),
+                  color: Theme.of(context).colorScheme.onSurface),
               ),
             ),
           ),
