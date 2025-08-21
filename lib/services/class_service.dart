@@ -17,7 +17,7 @@ class ClassService extends BaseDatabaseService {
   ).toList();
 }
 
-  Future<DocumentReference> addClass(String name) async {
+  Future<DocumentReference> addClass(String name, Map<String, int?> schedule) async {
     if (userId == null) {
       throw Exception("User not authenticated");
     }
@@ -28,6 +28,11 @@ class ClassService extends BaseDatabaseService {
       'name' : name,
       'userID': [userId],
       'order': existing.length,
+      'schedule' : Map.fromEntries(
+        schedule.entries
+          .where((e) => e.value != null)
+          .map((e) => MapEntry(e.key, e.value))
+      )
     };
 
     return addDocument('classes', data);

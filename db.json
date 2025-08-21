@@ -9,7 +9,12 @@
             "name": "Math",
             "userID": [
                 "U1234"
-            ]
+            ],
+            "order": 0,
+            "schedule": {
+                "Mon": 1,
+                "Wed": 2    
+            }
         }
     },
     "students": {
