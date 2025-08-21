@@ -1,48 +1,6 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
-
-class StudentsDatabaseService extends StatelessWidget {// Query's student Ids and Presences in class
-  StudentsDatabaseService({super.key});
-
-  final FirebaseAuth auth = FirebaseAuth.instance;
-
-  Future<Map<String, dynamic>> getStudentIDList(String classID) async {
-    Map<String, dynamic> studentIDs = {};
-
-    final QuerySnapshot result = await FirebaseFirestore.instance
-        .collection('attendance')
-        .where('classID', isEqualTo: classID)
-        .get();
-
-    for (var eachResult in result.docs) {
-      final presence = eachResult.get('presence');
-      studentIDs.addAll(presence);
-    }
-    return studentIDs;
-  }
-
-  Future<List<Map<String, String>>> getStudentList(String classID) async {// Query's the students names that match id
-    Map<String, dynamic> studentIDs = await getStudentIDList(classID);
-    if (studentIDs.isEmpty) return [];
-
-    final QuerySnapshot result = await FirebaseFirestore.instance
-        .collection('students')
-        .where(FieldPath.documentId, whereIn: studentIDs.keys.toList())
-        .get();
-    
-    return result.docs.map((doc) {
-      return {
-        'name': doc.get('name') as String,
-        'presence': studentIDs[doc.id] as String,
-      };
-    }).toList();
-  }
-
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
+import 'package:school_role/services/student_service.dart';
 
 class StudentList extends StatefulWidget {
   final String classID;
@@ -59,50 +17,59 @@ class _StudentListState extends State<StudentList> {
   @override
   void initState() {
     super.initState();
-    futureStudents = StudentsDatabaseService().getStudentList(widget.classID);
+    futureStudents = StudentService().getStudentList(widget.classID);
   }
 
   @override
-
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Map<String, String>>>(
-      future: futureStudents,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return const Center(child: Text('Error loading students'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No students found'));
-        } else {
-          var students = snapshot.data!;
-          return Scrollbar(
-            thickness: 10,
-            radius: const Radius.circular(5),
-            child: ListView.builder(
-              itemCount: students.length,
-              itemBuilder: (BuildContext context, index) {
-                String studentName = students[index]['name']!;
-                String selectedPresence = students[index]['presence']!;
-                return Padding(
-                  padding: const EdgeInsets.all(2.0),
-                  child: Card(
-                    surfaceTintColor: Theme.of(context)
-                        .colorScheme
-                        .primary
-                        .harmonizeWith(Colors.white),
-                    child: ListTile(
-                      title: Text(studentName), // Display student name
-                      trailing:
-                        PresenceSelector(selectedPresece: selectedPresence), // Dislay presence selector
+    return Scaffold(
+      body: FutureBuilder<List<Map<String, String>>>(
+        future: futureStudents,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error loading students: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No students found'));
+          } else {
+            var students = snapshot.data!;
+            return Scrollbar(
+              thickness: 10,
+              radius: const Radius.circular(5),
+              child: ListView.builder(
+                itemCount: students.length,
+                itemBuilder: (BuildContext context, index) {
+                  Map<String, String> student = students[index];
+                  return Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: Card(
+                      surfaceTintColor: Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .harmonizeWith(Colors.white),
+                      child: ListTile(
+                        title: Text(student['name']!), // Display student name
+                        trailing:
+                          PresenceSelector(selectedPresence: student['presence']!), // Dislay presence selector
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
-          );
+                  );
+                },
+              ),
+            );
+          }
         }
-      }
+      ),
+      floatingActionButton: FloatingActionButton(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadiusGeometry.all(Radius.circular(20)),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        child: const Icon(Icons.add),
+        onPressed: () async {},
+      ),
     );
   }
 }
@@ -115,9 +82,8 @@ enum Presence {
 } // Values for presence status
 
 class PresenceSelector extends StatefulWidget {
-  final String selectedPresece;
-  
-  const PresenceSelector({super.key, required this.selectedPresece}); // Presence selector widget
+  final String selectedPresence;
+  const PresenceSelector({super.key, required this.selectedPresence}); // Presence selector widget
 
   @override
   State<PresenceSelector> createState() =>
@@ -126,7 +92,16 @@ class PresenceSelector extends StatefulWidget {
 
 class _PresenceSelectorState extends State<PresenceSelector> {
   // Presence presenceView = Presence.absent; // Defualt status
-  late Presence presenceView = Presence.values.byName(widget.selectedPresece);
+  late Presence presenceView;
+
+  @override
+  void initState() {
+    super.initState();
+    presenceView = Presence.values.firstWhere(
+      (p) => p.value == widget.selectedPresence,
+      orElse: () => Presence.absent,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -147,13 +122,11 @@ class _PresenceSelectorState extends State<PresenceSelector> {
           label: Text('Absent'),
         ),
       ],
-      selected: <Presence>{presenceView}, // Selected presence
-      onSelectionChanged: (Set<Presence> newSelection) {
-        setState(
-          () {
-            presenceView = newSelection.first; // Updates presence for selected
-          },
-        );
+      selected: {presenceView}, // Selected presence
+      onSelectionChanged: (newSelection) {
+        setState(() {
+          presenceView = newSelection.first; // Updates presence for selected
+        });
       },
     );
   }

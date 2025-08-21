@@ -84,29 +84,6 @@ class _ClassesListState extends State<ClassesList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadiusGeometry.all(Radius.circular(20)),
-        ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        child: const Icon(Icons.add),
-        onPressed: () async {
-          final controller = TextEditingController();
-          final shouldRefresh = await showModalBottomSheet<bool>(
-            context: context,
-            isScrollControlled: true,
-            builder: (context) => ClassBottomSheet(
-              controller: controller,
-              uID: widget.uID,
-              classService: classService,
-              onGetClasses: loadClasses,
-            ),
-          );
-
-          if (shouldRefresh == true) loadClasses();
-        },
-      ),
       body: FutureBuilder<List<Map<String, String>>>(
         future: futureClasses,
         builder: (context, snapshot) {
@@ -173,6 +150,29 @@ class _ClassesListState extends State<ClassesList> {
               ),
             );
           }
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadiusGeometry.all(Radius.circular(20)),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        child: const Icon(Icons.add),
+        onPressed: () async {
+          final controller = TextEditingController();
+          final shouldRefresh = await showModalBottomSheet<bool>(
+            context: context,
+            isScrollControlled: true,
+            builder: (context) => ClassBottomSheet(
+              controller: controller,
+              uID: widget.uID,
+              classService: classService,
+              onGetClasses: loadClasses,
+            ),
+          );
+
+          if (shouldRefresh == true) loadClasses();
         },
       ),
     );
