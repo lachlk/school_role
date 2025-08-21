@@ -51,10 +51,34 @@ class _ClassesListState extends State<ClassesList> {
             onDelete: loadClasses,
             uID: widget.uID,
             classService: classService,
+            onRefresh: loadClasses,
+            onUpdate: updateClassTile,
           ),
         ),
       ),
     );
+  }
+
+  void updateClassTile(String classId, String newName) {
+    final index = draggableItems.indexWhere(
+      (item) => (item.child as ClassGridTile).classID == classId,
+    );
+    if (index != -1) {
+      setState(() {
+        draggableItems[index] = DraggableGridItem(
+          isDraggable: true,
+          child: ClassGridTile(
+            className: newName,
+            classID: classId,
+            onDelete: loadClasses,
+            onRefresh: loadClasses,
+            uID: widget.uID,
+            classService: classService,
+            onUpdate: updateClassTile,
+          ),
+        );
+      });
+    }
   }
 
   @override
