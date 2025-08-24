@@ -34,28 +34,30 @@ class _StudentListState extends State<StudentList> {
             return const Center(child: Text('No students found'));
           } else {
             var students = snapshot.data!;
-            return Scrollbar(
-              thickness: 10,
-              radius: const Radius.circular(5),
-              child: ListView.builder(
-                itemCount: students.length,
-                itemBuilder: (BuildContext context, index) {
-                  Map<String, String> student = students[index];
-                  return Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Card(
-                      surfaceTintColor: Theme.of(context)
-                          .colorScheme
-                          .primary
-                          .harmonizeWith(Colors.white),
-                      child: ListTile(
-                        title: Text(student['name']!), // Display student name
-                        trailing:
-                          PresenceSelector(selectedPresence: student['presence']!), // Dislay presence selector
+            return SafeArea(
+              child: Scrollbar(
+                thickness: 10,
+                radius: const Radius.circular(5),
+                child: ListView.builder(
+                  itemCount: students.length,
+                  itemBuilder: (BuildContext context, index) {
+                    Map<String, String> student = students[index];
+                    return Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: Card(
+                        surfaceTintColor: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .harmonizeWith(Colors.white),
+                        child: ListTile(
+                          title: Text(student['name']!), // Display student name
+                          trailing:
+                            PresenceSelector(selectedPresence: student['presence']!), // Dislay presence selector
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             );
           }

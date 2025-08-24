@@ -6,35 +6,27 @@ import 'package:school_role/main.dart';
 class ClassGridTile extends StatelessWidget {
   const ClassGridTile({
     super.key,
-    required this.className,
     required this.classID,
+    required this.className,
     required this.uID,
-    required this.onRefresh,
     required this.classService,
-    required this.onDelete,
-    required this.onUpdate,
   });
 
-  final String className;
   final String classID;
+  final String className;
   final String uID;
   final ClassService classService;
-  final VoidCallback onRefresh;
-  final VoidCallback? onDelete;
-  final void Function(String classId, String newName) onUpdate;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: GestureDetector(
-        // Detects clicking of the card
         onTap: () async {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                ThirdRoute(classID: classID),
+              builder: (context) => ThirdRoute(classID: classID),
             ),
           );
         },
@@ -48,9 +40,6 @@ class ClassGridTile extends StatelessWidget {
               child: CascadingMenu(
                 classID: classID,
                 classService: classService,
-                onDelete: onDelete ?? () {},
-                onRefresh: onRefresh,
-                onUpdate: onUpdate,
               ),
             ),
             footer: GridTileBar(
@@ -66,8 +55,10 @@ class ClassGridTile extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: FittedBox(
                 fit: BoxFit.contain,
-                child: Icon(Icons.groups,
-                  color: Theme.of(context).colorScheme.onSurface),
+                child: Icon(
+                  Icons.groups,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
             ),
           ),

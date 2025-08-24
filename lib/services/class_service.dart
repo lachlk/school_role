@@ -1,94 +1,93 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'base_database_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class ClassService extends BaseDatabaseService {
-  Future<List<Map<String, String>>> getClassList(String uID) async {
-    final docs = await getDocuments(
-      'classes',
-      queryBuilder: (q) =>
-          q.where('userID', arrayContains: uID).orderBy('order'),
-    );
+class ClassService {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final String collectionName = 'classes';
 
-    return docs.map((doc) {
-      final data = doc.data() as Map<String, dynamic>? ?? {};
-      final name = data['name'];
-      return {
-        'id': doc.id,
-        'name': name is String ? name : 'Unnamed',
-      };
-    }).toList();
+  String get currentUserId {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      throw Exception("User not authenticated");
+    }
+    return user.uid;
   }
 
-  Future<void> updateClass(
-      String classId, String name, Map<String, int?> schedule) async {
-    final filteredSchedule =
-        Map.fromEntries(schedule.entries.where((e) => e.value != null));
-
-    await db.collection('classes').doc(classId).update({
-      'name': name,
-      'schedule': filteredSchedule,
+  Stream<List<Map<String, dynamic>>> streamClassList() {
+    final uID = currentUserId;
+    return _firestore
+        .collection(collectionName)
+        .where('userID', arrayContains: uID)
+        .orderBy('order', descending: false)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        final data = doc.data();
+        return {
+          'id': doc.id,
+          'name': data['name'] ?? 'Unnamed',
+          'schedule': data['schedule'] ?? {},
+          'order': data['order'] ?? 0,
+          'createdAt': data['createdAt'],
+        };
+      }).toList();
     });
   }
 
-  Future<DocumentReference> addClass(
-      String name, Map<String, int?> schedule) async {
-    final currentUserId = userId; 
-    if (currentUserId == null) {
-      throw Exception("User not authenticated");
-    }
-
-    final existing = await getClassList(userId!);
-
+  Future<void> addClass(String name, Map<String, int?> schedule) async {
+    final uID = currentUserId;
     final safeSchedule = Map.fromEntries(
-      schedule.entries.where((e) => e.value != null).map(
-            (e) => MapEntry(e.key, e.value),
-          ),
+      schedule.entries.where((e) => e.value != null),
     );
 
-    final data = {
+    try {
+      final snapshot = await _firestore
+          .collection(collectionName)
+          .where('userID', arrayContains: uID)
+          .get();
+      final newOrder = snapshot.size;
+
+      await _firestore.collection(collectionName).add({
+        'name': name,
+        'schedule': safeSchedule,
+        'userID': [uID],
+        'order': newOrder,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      throw Exception('Failed to add class: $e');
+    }
+  }
+
+  Future<void> updateClass(
+      String classID, String name, Map<String, int?> schedule) async {
+    final safeSchedule = Map.fromEntries(
+      schedule.entries.where((e) => e.value != null),
+    );
+
+    await _firestore.collection(collectionName).doc(classID).update({
       'name': name,
-      'userID': [currentUserId],
-      'order': existing.length,
       'schedule': safeSchedule,
-    };
-
-    return addDocument('classes', data);
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
   }
 
-  Future<Map<String, dynamic>?> getClassById(String classId) async {
-    final doc = await db.collection('classes').doc(classId).get();
-    if (!doc.exists) return null;
-
-    final data = doc.data() ?? {};
-
-    final scheduleData = data['schedule'];
-    final safeSchedule = scheduleData is Map<String, dynamic>
-        ? scheduleData.map((k, v) => MapEntry(k, v is int ? v : null))
-        : {};
-
-    final rawUserID = data['userID'];
-    final safeUserIDs =
-        rawUserID is List ? List<String>.from(rawUserID) : <String>[];
-
-    return {
-      'id': doc.id,
-      'name': data['name'] is String ? data['name'] as String : 'Unnamed',
-      'schedule': safeSchedule,
-      'userID': safeUserIDs,
-      'order': data['order'] is int ? data['order'] as int : 0,
-    };
+  Future<void> deleteClass(String classID) async {
+    await _firestore.collection(collectionName).doc(classID).delete();
   }
 
-  Future<void> reorderClasses(List<dynamic> classIds) async {
-    final batch = db.batch();
-    for (int i = 0; i < classIds.length; i++) {
-      final docRef = db.collection('classes').doc(classIds[i]);
+  Future<void> reorderClasses(List<String> orderedIDs) async {
+    final batch = _firestore.batch();
+    for (int i = 0; i < orderedIDs.length; i++) {
+      final docRef = _firestore.collection(collectionName).doc(orderedIDs[i]);
       batch.update(docRef, {'order': i});
     }
     await batch.commit();
   }
 
-  Future<void> deleteClass(String classId) async {
-    await deleteDocument('classes', classId);
+  Future<Map<String, dynamic>?> getClassById(String classID) async {
+    final doc = await _firestore.collection(collectionName).doc(classID).get();
+    if (!doc.exists) return null;
+    return doc.data();
   }
 }

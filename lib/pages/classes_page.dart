@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_draggable_gridview/flutter_draggable_gridview.dart';
 import 'package:school_role/main.dart';
 import 'package:school_role/services/class_service.dart';
-import 'package:school_role/widgets/class_page_widgets/classes_list.dart';
 import 'package:school_role/widgets/class_page_widgets/class_bottom_sheet.dart';
+import 'package:school_role/widgets/class_page_widgets/classes_list.dart';
 
-class ClassesPage extends StatefulWidget {
+class ClassesPage extends StatelessWidget {
   const ClassesPage({
     super.key,
     required this.uID
@@ -13,67 +12,36 @@ class ClassesPage extends StatefulWidget {
 
   final String uID;
 
-  @override
-  State<ClassesPage> createState() => _ClassesPageState();
-}
+  Future<void> _showAddClassSheet(BuildContext context) async {
+    final controller = TextEditingController();
 
-class _ClassesPageState extends State<ClassesPage> {
-  final ClassService classService = ClassService();
-  late Future<List<Map<String, String>>> futureClasses;
-  final List<DraggableGridItem> draggableItems = [];
-  late final ScrollController scrollController;
-
-  @override
-  void initState() {
-    super.initState();
-    scrollController = ScrollController();
-    loadClasses();
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => ClassBottomSheet(
+        controller: controller,
+        uID: uID,
+        classService: ClassService(),
+      ),
+    );
   }
 
-  void loadClasses() {
-    setState(() {
-      draggableItems.clear();
-      futureClasses = classService.getClassList(widget.uID);
-    });
-  }
-
-    @override
-  void dispose() {
-    scrollController.dispose();
-    super.dispose();
-  }
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(onBackTap: null),
       body: ClassesList(
-        uID: widget.uID,
-        classService: classService,
-        onRefresh: loadClasses,
+        uID: uID,
+        classService: ClassService(),
       ),
       floatingActionButton: FloatingActionButton(
+        onPressed: () => _showAddClassSheet(context),
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadiusGeometry.all(Radius.circular(20)),
+          borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
         child: const Icon(Icons.add),
-        onPressed: () async {
-          final controller = TextEditingController();
-          final shouldRefresh = await showModalBottomSheet<bool>(
-            context: context,
-            isScrollControlled: true,
-            builder: (context) => ClassBottomSheet(
-              controller: controller,
-              uID: widget.uID,
-              classService: classService,
-              onGetClasses: loadClasses,
-            ),
-          );
-
-          if (shouldRefresh == true) loadClasses();
-        },
       ),
     );
   }
