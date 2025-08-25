@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:school_role/firebase_options.dart';
 
-import 'package:firebase_ui_auth/firebase_ui_auth.dart';
-import 'package:firebase_auth/firebase_auth.dart' as fba;
-
 import 'package:school_role/pages/auth_gate.dart';
 import 'package:school_role/pages/classes_page.dart';
-import 'package:school_role/pages/presence_page.dart';
+import 'package:school_role/pages/student_page.dart';
 import 'package:school_role/theme.dart'; // Imports the required packages and files
 
 void main() async {
@@ -23,139 +20,34 @@ class FirstRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: AuthGate(), // Setting AuthGate as body
-    );
+    return AuthGate(); // Setting AuthGate as body
   }
 }
 
 class SecondRoute extends StatelessWidget {
-  final String uID;
+  const SecondRoute({
+    super.key,
+    required this.uID,
+  }); // Second route for page navigation
 
-  const SecondRoute({super.key, required this.uID}); // Second route for page navigation
+  final String uID;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: MyAppBar(
-        onBackTap: null,
-      ), // Setting MyAppBar as appBar widget
-      body: ClassesList(uID: uID), // Setting ClassesList as body
-    );
+    return ClassesPage(uID: uID);
   }
 }
 
 class ThirdRoute extends StatelessWidget {
+  const ThirdRoute({
+    super.key,
+    required this.classID
+  }); // Third route for page navigation
+
   final String classID;
 
-  const ThirdRoute({super.key, required this.classID}); // Third route for page navigation
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: MyAppBar(onBackTap: () {
-        Navigator.pop(
-          context,
-          MaterialPageRoute<FirstRoute>(
-            builder: (context) => ThirdRoute(classID: classID,),
-          ),
-        );
-      }), // Setting MyAppBar as appBar widget
-      body: StudentList(classID: classID), // Setting StudentList as body
-    );
-  }
-}
-
-class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final dynamic onBackTap;
-
-  const MyAppBar(
-      {super.key, required this.onBackTap}); // MyAppBar widget for app header
-
-  @override
-  Size get preferredSize => const Size.fromHeight(100);
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(
-      elevation: 3, // Shadow elevation
-      backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest, // App bar color based on dark or light mode
-      shadowColor: Colors.black, // Shadow color
-      toolbarHeight: 80, // Height of the app bar
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(20),
-          bottomRight: Radius.circular(20),
-        ),
-      ), // Custom shape for appbar
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back),
-        onPressed: onBackTap,
-        color: Theme.of(context).colorScheme.onSurface, // Icon color based on dark or light mode
-      ),
-      actions: const [
-        Padding(padding: EdgeInsets.only(right: 10.0), child: SignOutButton()),
-      ],
-    );
-  }
-}
-
-class SignOutButton extends StatelessWidget {
-  /// {@macro ui.auth.auth_controller.auth}
-  final fba.FirebaseAuth? auth;
-
-  /// {@macro ui.shared.widgets.button_variant}
-  final ButtonVariant variant;
-
-  /// {@macro ui.auth.widgets.sign_out_button}
-  const SignOutButton({
-    super.key,
-    this.auth,
-    this.variant = ButtonVariant.filled,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-      ),
-      child: Text(
-        "Sign Out",
-        style: TextStyle(
-            color: Theme.of(context)
-                .colorScheme
-                .onPrimary), // Text color based on dark or light mode
-      ),
-      onPressed: () => showDialog<String>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text('Do you want to sign out?'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.pop(context, 'Cancel'),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  // When pressed runs FirstRoute
-                  context,
-                  MaterialPageRoute<FirstRoute>(
-                    builder: (context) => const FirstRoute(),
-                  ),
-                );
-                FirebaseUIAuth.signOut(
-                  // Firebase auth signs user out
-                  context: context,
-                  auth: auth,
-                );
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      ),
-    );
+    return StudentPage(classID: classID);
   }
 }

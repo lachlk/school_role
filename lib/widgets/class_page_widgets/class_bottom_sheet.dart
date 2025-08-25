@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:school_role/services/class_service.dart';
-import 'package:school_role/widgets/weekday_selector.dart';
+import 'package:school_role/widgets/class_page_widgets/weekday_selector.dart';
 
 class ClassBottomSheet extends StatefulWidget {
   const ClassBottomSheet({
     super.key,
     required this.controller,
     required this.uID,
-    required this.classService,
-    required this.onGetClasses,
+    required this.classService, 
     this.classId,
     this.initialSelection,
   });
 
-  final String uID;
   final TextEditingController controller;
+  final String uID;
   final ClassService classService;
-  final VoidCallback onGetClasses;
-  final String? classId;
   final Map<String, int?>? initialSelection;
+  final String? classId;
+
 
   @override
   State<ClassBottomSheet> createState() => _ClassBottomSheetState();
@@ -55,7 +54,7 @@ class _ClassBottomSheetState extends State<ClassBottomSheet> {
         padding: const EdgeInsets.all(16),
         child: ListView(
           shrinkWrap: true,
-          children: <Widget>[
+          children: [
             TextField(
               controller: widget.controller,
               decoration: InputDecoration(
@@ -67,23 +66,19 @@ class _ClassBottomSheetState extends State<ClassBottomSheet> {
             ),
             WeekdaySelector(
               initialSelection: selectedDays,
-              onSelectedChanged: (days) {
-                setState(() {
-                  selectedDays = days;
-                });
-              },
+              onSelectedChanged: (days) => setState(() => selectedDays = days),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextButton(
-                  child: const Text("Close"),
                   onPressed: () => Navigator.of(context).pop(),
+                  child: const Text("Close"),
                 ),
                 ValueListenableBuilder<TextEditingValue>(
                   valueListenable: widget.controller,
                   builder: (context, value, child) {
-                    final isEnabled = value.text.isNotEmpty;
+                    final isEnabled = value.text.trim().isNotEmpty;
                     return TextButton(
                       onPressed: isEnabled
                         ? () async {
@@ -92,15 +87,23 @@ class _ClassBottomSheetState extends State<ClassBottomSheet> {
                               selectedDays.entries.where((e) => e.value != null),
                             );
 
-                            if (widget.classId == null) {
-                              await widget.classService.addClass(name, filteredDays);
-                            } else {
-                              await widget.classService.updateClass(widget.classId!, name, filteredDays);
-                            }
+                            try {
+                              if (widget.classId == null) {
+                                await widget.classService.addClass(
+                                  name, filteredDays);
+                              } else {
+                                await widget.classService.updateClass(
+                                  widget.classId!, name, filteredDays);
+                              }
 
-                            widget.onGetClasses();
-                            if (!context.mounted) return;
-                            Navigator.of(context).pop(true);
+                              if (!context.mounted) return;
+                              Navigator.of(context).pop(true);
+                            } catch (e) {
+                              if (!context.mounted) return;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Error: $e')),
+                              );
+                            }
                           }
                         : null,
                       child: const Text("Submit"),
