@@ -106,7 +106,7 @@ class _ClassBottomSheetState extends State<ClassBottomSheet> {
                             }
                           }
                         : null,
-                      child: const Text("Submit"),
+                      child: const Text("Save"),
                     );
                   },
                 ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_role/main.dart';
 import 'package:school_role/widgets/custom_app_bar.dart';
+import 'package:school_role/widgets/student_page_widgets/student_bottom_sheet.dart';
 import 'package:school_role/widgets/student_page_widgets/student_list.dart';
 
 class StudentPage extends StatefulWidget {
@@ -32,7 +33,12 @@ class _StudentPageState extends State<StudentPage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
         child: const Icon(Icons.add),
-        onPressed: () async {},
+        onPressed: () => showModalBottomSheet(
+          context: context,
+          builder: (context) {
+            return const StudentBottomSheet();
+          },
+        ),
       ),
     );
   }
