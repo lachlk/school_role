@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:school_role/main.dart';
 import 'package:school_role/services/class_service.dart';
 import 'package:school_role/widgets/class_page_widgets/class_bottom_sheet.dart';
 import 'package:school_role/widgets/class_page_widgets/classes_list.dart';
+import 'package:school_role/widgets/custom_app_bar.dart';
 
 class ClassesPage extends StatelessWidget {
   const ClassesPage({
@@ -29,7 +29,7 @@ class ClassesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(onBackTap: null),
+      appBar: CustomAppBar(onBackTap: null),
       body: ClassesList(
         uID: uID,
         classService: ClassService(),
