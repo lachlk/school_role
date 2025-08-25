@@ -1,35 +1,54 @@
 {
-    "users": {
-        "U1234": {
-            "email": "example@gmail.com"
-        }
-    },
-    "classes": {
-        "C4321": {
-            "name": "Math",
-            "userID": [
-                "U1234"
-            ],
-            "order": 0,
-            "schedule": {
-                "Mon": 1,
-                "Wed": 2    
-            }
-        }
-    },
-    "students": {
-        "S5643": {
-            "name": "Bob John"
-        }
-    },
-    "attendance": {
-        "DocID": {
-            "classID": "C4321",
-            "timestamp": "time...",
-            "attendance": {
-                "studentID": "late"
-            }
-        }
-    }
+  "schools": {
+    "School123": {
+      "metadata": {
+        "name": "Wakatipu High"
+      },
 
+      "teachers": {
+        "U1234": {
+          "name": "Mr Smith",
+          "email": "teacher1@example.com"
+        }
+      },
+
+      "students": {
+        "S5643": {
+          "name": "Bob John",
+          "email": "bob@example.com",
+          "yearLevel": 13
+        }
+      },
+
+      "classes": {
+        "C4321": {
+          "name": "Math",
+          "teacherID": "U1234",
+          "order": 0,
+          "schedule": {
+            "Mon": 1,
+            "Wed": 2
+          },
+          "studentIDs": {
+            "S5643": true,
+            "S7890": true
+          }
+        }
+      },
+
+      "attendance": {
+        "A001": {
+          "classID": "C4321",
+          "timestamp": "2025-08-25T09:00:00Z",
+          "schedule": {
+            "Wed": 2
+          },
+          "records": {
+            "S5643": "present",
+            "S7890": "late"
+          }
+        }
+      }
+    }
+  }
 }
