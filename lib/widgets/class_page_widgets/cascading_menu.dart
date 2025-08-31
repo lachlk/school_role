@@ -32,7 +32,7 @@ class CascadingMenu extends StatelessWidget {
                 TextButton(
                   onPressed: () async {
                     await classService.deleteClass(classID);
-                    Navigator.of(context).pop();
+                    if (context.mounted) Navigator.of(context).pop();
                   },
                   child: const Text('Delete'),
                 ),
@@ -49,7 +49,6 @@ class CascadingMenu extends StatelessWidget {
 
             final controller = TextEditingController(text: data['name'] ?? '');
             final initialDays = Map<String, int?>.from(data['schedule'] ?? {});
-            final uID = (data['userID'] as List).isNotEmpty ? data['userID'][0] : '';
 
             if (!context.mounted) return;
             await showModalBottomSheet(
@@ -57,7 +56,6 @@ class CascadingMenu extends StatelessWidget {
               isScrollControlled: true,
               builder: (context) => ClassBottomSheet(
                 controller: controller,
-                uID: uID,
                 classService: classService,
                 initialSelection: initialDays,
                 classId: classID,

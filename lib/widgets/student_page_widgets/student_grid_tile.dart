@@ -15,8 +15,8 @@ class StudentGridTile extends StatelessWidget {
         elevation: 2,
         color: Theme.of(context).colorScheme.surfaceContainerHigh,
         child: ListTile(
-          title: Text(student['name']!), // Display student name
-          trailing: PresenceSelector(selectedPresence: student['presence']!), // Display presence selector
+          title: Text(student['name']!),
+          trailing: PresenceSelector(selectedPresence: student['presence']!),
         ),
       ),
     );

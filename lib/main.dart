@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:school_role/firebase_options.dart';
@@ -41,13 +42,18 @@ class SecondRoute extends StatelessWidget {
 class ThirdRoute extends StatelessWidget {
   const ThirdRoute({
     super.key,
-    required this.classID
-  }); // Third route for page navigation
+    required this.classID,
+  });
 
   final String classID;
 
   @override
   Widget build(BuildContext context) {
-    return StudentPage(classID: classID);
+    final String schoolID = FirebaseAuth.instance.currentUser!.uid;
+
+    return StudentPage(
+      classID: classID,
+      schoolID: schoolID,
+    );
   }
 }
