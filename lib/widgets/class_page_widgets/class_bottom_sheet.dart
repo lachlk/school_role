@@ -6,14 +6,12 @@ class ClassBottomSheet extends StatefulWidget {
   const ClassBottomSheet({
     super.key,
     required this.controller,
-    required this.uID,
     required this.classService, 
     this.classId,
     this.initialSelection,
   });
 
   final TextEditingController controller;
-  final String uID;
   final ClassService classService;
   final Map<String, int?>? initialSelection;
   final String? classId;

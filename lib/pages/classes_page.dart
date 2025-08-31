@@ -20,7 +20,6 @@ class ClassesPage extends StatelessWidget {
       isScrollControlled: true,
       builder: (context) => ClassBottomSheet(
         controller: controller,
-        uID: uID,
         classService: ClassService(),
       ),
     );

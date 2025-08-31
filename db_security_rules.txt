@@ -1,32 +1,27 @@
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
-  
+
+    match /schools/{schoolID} {
+      allow read, write: if request.auth != null && request.auth.uid == schoolID;
+
+      match /classes/{classID} {
+        allow read, write: if request.auth != null && request.auth.uid == schoolID;
+      }
+
+      match /students/{studentID} {
+        allow read: if request.auth != null;
+        allow write: if request.auth != null && request.auth.uid == schoolID;
+      }
+
+      match /attendance/{attendanceID} {
+        allow read, write: if request.auth != null && request.auth.uid == schoolID;
+      }
+    }
+
     match /users/{userID} {
       allow read, update, delete: if request.auth != null && request.auth.uid == userID;
       allow create: if request.auth != null;
-    }
-    
-     match /classes/{classID} {
-      allow read: if request.auth != null && resource.data.userID.hasAny([request.auth.uid]);
-      allow create: if request.auth != null && request.resource.data.userID.hasAny([request.auth.uid]);
-      allow update: if request.auth != null && request.resource.data.userID.hasAny([request.auth.uid]);
-    }
-    
-    match /students/{studentID} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null && request.auth.token.admin == true;
-    }
-
-    match /attendance/{docID} {
-      allow read: if request.auth != null && isClassOwner(resource.data.classID);
-      allow write: if request.auth != null && isClassOwner(request.resource.data.classID);
-    }
-
-    function isClassOwner(classID) {
-      return exists(/databases/$(database)/documents/classes/$(classID)) && 
-             get(/databases/$(database)/documents/classes/$(classID)).data.userID.hasAny([request.auth.uid]);
     }
   }
 }
