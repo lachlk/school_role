@@ -19,6 +19,40 @@ class ClassService extends BaseDatabaseService {
     });
   }
 
+  Future<void> removeStudentFromClass({
+    required String schoolID,
+    required String classID,
+    required String studentID,
+  }) async {
+    final docRef = _firestore
+        .collection('schools')
+        .doc(schoolID)
+        .collection('classes')
+        .doc(classID);
+
+    await docRef.update({
+      'studentIDs.$studentID': FieldValue.delete(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<bool> isStudentInClass({
+    required String schoolID,
+    required String classID,
+    required String studentID,
+  }) async {
+    final docRef = _firestore
+        .collection('schools')
+        .doc(schoolID)
+        .collection('classes')
+        .doc(classID);
+
+    final snapshot = await docRef.get();
+    final studentIDs = snapshot.data()?['studentIDs'] as Map<String, dynamic>?;
+
+    return studentIDs?.containsKey(studentID) ?? false;
+  }
+
   Future<List<String>> getClassStudentIDs(String schoolID, String classID) async {
     final doc =
         await _firestore.collection('schools').doc(schoolID).collection('classes').doc(classID).get();

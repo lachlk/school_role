@@ -33,11 +33,8 @@ class StudentList extends StatelessWidget {
           itemCount: students.length,
           itemBuilder: (context, index) {
             final student = students[index];
-            final studentDataWithPresence = Map<String, dynamic>.from(student.toMap());
-            studentDataWithPresence['presence'] = 'present'; 
-
             return StudentGridTile(
-              student: studentDataWithPresence.map((k, v) => MapEntry(k, v.toString())),
+              student: student.toMap().map((k, v) => MapEntry(k, v.toString())),
             );
           },
         );
