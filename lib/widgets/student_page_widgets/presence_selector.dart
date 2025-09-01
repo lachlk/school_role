@@ -1,23 +1,29 @@
 import 'package:flutter/material.dart';
 
 enum Presence {
-  present('present'), late('late'), absent('absent');
+  present('present'),
+  late('late'),
+  absent('absent');
 
   const Presence(this.value);
   final String value;
-} // Values for presence status
+}
 
 class PresenceSelector extends StatefulWidget {
   final String selectedPresence;
-  const PresenceSelector({super.key, required this.selectedPresence}); // Presence selector widget
+  final ValueChanged<String> onPresenceChanged;
+
+  const PresenceSelector({
+    super.key,
+    required this.selectedPresence,
+    required this.onPresenceChanged,
+  });
 
   @override
-  State<PresenceSelector> createState() =>
-      _PresenceSelectorState(); // Create state for presence selector
+  State<PresenceSelector> createState() => _PresenceSelectorState();
 }
 
 class _PresenceSelectorState extends State<PresenceSelector> {
-  // Presence presenceView = Presence.absent; // Defualt status
   late Presence presenceView;
 
   @override
@@ -32,7 +38,6 @@ class _PresenceSelectorState extends State<PresenceSelector> {
   @override
   Widget build(BuildContext context) {
     return SegmentedButton<Presence>(
-      // Segmented button for presence
       showSelectedIcon: false,
       segments: const <ButtonSegment<Presence>>[
         ButtonSegment<Presence>(
@@ -48,11 +53,12 @@ class _PresenceSelectorState extends State<PresenceSelector> {
           label: Text('Absent'),
         ),
       ],
-      selected: {presenceView}, // Selected presence
+      selected: {presenceView},
       onSelectionChanged: (newSelection) {
         setState(() {
-          presenceView = newSelection.first; // Updates presence for selected
+          presenceView = newSelection.first;
         });
+        widget.onPresenceChanged(presenceView.value);
       },
     );
   }
