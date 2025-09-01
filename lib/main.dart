@@ -6,22 +6,22 @@ import 'package:school_role/firebase_options.dart';
 import 'package:school_role/pages/auth_gate.dart';
 import 'package:school_role/pages/classes_page.dart';
 import 'package:school_role/pages/student_page.dart';
-import 'package:school_role/theme.dart'; // Imports the required packages and files
+import 'package:school_role/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(
     const DynamicTheme(),
-  ); // Start of the application
+  );
 }
 
 class FirstRoute extends StatelessWidget {
-  const FirstRoute({super.key}); // First route for page navigation
+  const FirstRoute({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return AuthGate(); // Setting AuthGate as body
+    return AuthGate();
   }
 }
 
@@ -29,7 +29,7 @@ class SecondRoute extends StatelessWidget {
   const SecondRoute({
     super.key,
     required this.uID,
-  }); // Second route for page navigation
+  });
 
   final String uID;
 
@@ -43,9 +43,11 @@ class ThirdRoute extends StatelessWidget {
   const ThirdRoute({
     super.key,
     required this.classID,
+    required this.className,
   });
 
   final String classID;
+  final String className;
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +56,7 @@ class ThirdRoute extends StatelessWidget {
     return StudentPage(
       classID: classID,
       schoolID: schoolID,
+      className: className,
     );
   }
 }

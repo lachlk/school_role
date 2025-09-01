@@ -9,31 +9,24 @@ class StudentPage extends StatefulWidget {
     super.key,
     required this.classID,
     required this.schoolID,
+    required this.className,
   });
 
   final String classID;
   final String schoolID;
+  final String className;
 
   @override
   State<StudentPage> createState() => _StudentPageState();
 }
 
 class _StudentPageState extends State<StudentPage> {
-  final ClassService _classService = ClassService();
-
-  Future<void> _removeStudent(String studentID) async {
-    await _classService.removeStudentFromClass(
-      schoolID: widget.schoolID,
-      classID: widget.classID,
-      studentID: studentID,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
         onBackTap: () => Navigator.of(context).pop(),
+        title: widget.className,
       ),
       body: StudentList(
         classID: widget.classID,
@@ -52,7 +45,16 @@ class _StudentPageState extends State<StudentPage> {
           builder: (context) => StudentBottomSheet(
             classID: widget.classID,
             schoolID: widget.schoolID,
-            onRemove: _removeStudent,
+            onStudentAdded: () => setState(() {}),
+            onRemove: (studentID) async {
+              final classService = ClassService();
+              await classService.removeStudentFromClass(
+                schoolID: widget.schoolID,
+                classID: widget.classID,
+                studentID: studentID,
+              );
+              setState(() {});
+            },
           ),
         ),
       ),

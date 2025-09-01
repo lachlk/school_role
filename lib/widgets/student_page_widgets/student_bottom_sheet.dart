@@ -33,6 +33,13 @@ class _StudentBottomSheetState extends State<StudentBottomSheet> {
   Student? _selectedStudent;
   bool _isStudentInClass = false;
 
+  @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    super.dispose();
+  }
+
   Future<List<String>> _searchStudentNames(String query) async {
     if (query.isEmpty) return [];
     final allStudents = await _studentService.getAllStudents(widget.schoolID);
@@ -50,6 +57,14 @@ class _StudentBottomSheetState extends State<StudentBottomSheet> {
     if (name.isEmpty || email.isEmpty || yearLevel <= 0) return;
 
     if (_selectedStudent != null) {
+      await _studentService.updateStudent(
+        schoolID: widget.schoolID,
+        studentID: _selectedStudent!.id,
+        name: name,
+        email: email,
+        yearLevel: yearLevel,
+      );
+
       await _classService.addStudentToClass(
         schoolID: widget.schoolID,
         classID: widget.classID,

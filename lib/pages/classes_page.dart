@@ -28,7 +28,10 @@ class ClassesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(onBackTap: null),
+      appBar: CustomAppBar(
+        onBackTap: null,
+        title: 'Classes',
+      ),
       body: ClassesList(
         uID: uID,
         classService: ClassService(),

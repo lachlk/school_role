@@ -26,7 +26,10 @@ class ClassGridTile extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ThirdRoute(classID: classID),
+              builder: (context) => ThirdRoute(
+                classID: classID,
+                className: className,
+              ),
             ),
           );
         },
