@@ -4,6 +4,7 @@ import 'package:school_role/widgets/student_page_widgets/student_bottom_sheet.da
 import 'package:school_role/widgets/custom_app_bar.dart';
 import 'package:school_role/services/class_service.dart';
 import 'package:school_role/widgets/student_page_widgets/single_day_selector.dart';
+import 'package:school_role/services/attendance_service.dart';
 
 class StudentPage extends StatefulWidget {
   const StudentPage({
@@ -23,6 +24,14 @@ class StudentPage extends StatefulWidget {
 
 class _StudentPageState extends State<StudentPage> {
   final ClassService _classService = ClassService();
+  final AttendanceService _attendanceService = AttendanceService();
+  final Map<String, String> _attendanceRecords = {};
+
+  void _onAttendanceChanged(String studentID, String presence) {
+    setState(() {
+      _attendanceRecords[studentID] = presence;
+    });
+  }
 
   Future<void> _submitPresence() async {
     final classData = await _classService.getClassById(widget.classID);
@@ -37,11 +46,10 @@ class _StudentPageState extends State<StudentPage> {
     }
 
     final List<String> scheduledDays = schedule.keys.toList();
-
     final selectedDayNotifier = ValueNotifier<String?>(null);
 
     if (!context.mounted) return;
-    await showDialog(
+    final selectedDay = await showDialog<String?>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -68,13 +76,7 @@ class _StudentPageState extends State<StudentPage> {
               builder: (context, selectedDay, child) {
                 return ElevatedButton(
                   onPressed: selectedDay != null
-                      ? () {
-                          if (!context.mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Presence for $selectedDay submitted!')),
-                          );
-                          Navigator.of(context).pop();
-                        }
+                      ? () => Navigator.of(context).pop(selectedDay)
                       : null,
                   child: const Text('Submit'),
                 );
@@ -84,6 +86,32 @@ class _StudentPageState extends State<StudentPage> {
         );
       },
     );
+
+    if (selectedDay != null) {
+      final selectedPeriod = schedule[selectedDay] as int?;
+
+      if (selectedPeriod != null) {
+        try {
+          await _attendanceService.addAttendanceForDay(
+            classID: widget.classID,
+            schoolID: widget.schoolID,
+            records: _attendanceRecords,
+            selectedDay: selectedDay,
+            selectedPeriod: selectedPeriod,
+          );
+
+          if (!context.mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Presence for $selectedDay submitted!')),
+          );
+        } catch (e) {
+          if (!context.mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error submitting attendance: $e')),
+          );
+        }
+      }
+    }
   }
 
   @override
@@ -102,6 +130,7 @@ class _StudentPageState extends State<StudentPage> {
       body: StudentList(
         classID: widget.classID,
         schoolID: widget.schoolID,
+        onAttendanceChanged: _onAttendanceChanged,
       ),
       floatingActionButton: FloatingActionButton(
         shape: const RoundedRectangleBorder(

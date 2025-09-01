@@ -32,6 +32,26 @@ class AttendanceService extends BaseDatabaseService {
     });
   }
 
+  Future<void> addAttendanceForDay({
+    required String classID,
+    required String schoolID,
+    required Map<String, String> records,
+    required String selectedDay,
+    required int selectedPeriod,
+  }) async {
+    final col = await _attendanceCollection();
+
+    await col.add({
+      'classID': classID,
+      'timestamp': FieldValue.serverTimestamp(),
+      'schedule': {
+        'day': selectedDay,
+        'period': selectedPeriod,
+      },
+      'records': records,
+    });
+  }
+
   Future<List<Map<String, dynamic>>> getAttendanceForClass(
       String classID) async {
     final col = await _attendanceCollection();
@@ -39,10 +59,8 @@ class AttendanceService extends BaseDatabaseService {
 
     return snapshot.docs.map((doc) {
       final data = doc.data() as Map<String, dynamic>;
-      return {
-        'id': doc.id,
-        ...data,
-      };
+      data['id'] = doc.id;
+      return data;
     }).toList();
   }
 }
