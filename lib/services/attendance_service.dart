@@ -1,6 +1,12 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:school_role/services/base_database_service.dart';
 import 'package:school_role/services/class_service.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:file_saver/file_saver.dart';
 
 class AttendanceService extends BaseDatabaseService {
   Future<CollectionReference> _attendanceCollection() async {
@@ -62,5 +68,55 @@ class AttendanceService extends BaseDatabaseService {
       data['id'] = doc.id;
       return data;
     }).toList();
+  }
+
+  Future<void> exportAttendanceAsJson({
+    required String className,
+    required String selectedDay,
+    required int selectedPeriod,
+    required Map<String, String> records,
+  }) async {
+    final timeStamp = DateTime.now().toIso8601String();
+    final attendanceData = {
+      'className': className,
+      'date': timeStamp,
+      'day': selectedDay,
+      'period': selectedPeriod,
+      'records': records,
+    };
+
+    final jsonString = jsonEncode(attendanceData);
+    final fileName = 'attendance_$className.json';
+    final mimeType = MimeType.json;
+    final bytes = utf8.encode(jsonString);
+
+    if (kIsWeb) {
+      await FileSaver.instance.saveFile(
+        name: fileName,
+        bytes: bytes,
+        fileExtension: '.json',
+        mimeType: mimeType,
+      );
+    } else {
+      if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+        await FileSaver.instance.saveFile(
+          name: fileName,
+          bytes: bytes,
+          fileExtension: '.json',
+          mimeType: mimeType,
+        );
+      } else if (Platform.isAndroid || Platform.isIOS) {
+        final directory = await getTemporaryDirectory();
+        final file = File('${directory.path}/$fileName');
+        await file.writeAsString(jsonString);
+        await SharePlus.instance.share(
+          ShareParams(
+            files: [XFile(file.path)],
+            subject: 'Attendance Data',
+            text: 'Attendance for $className on $selectedDay (Period $selectedPeriod) $timeStamp',
+          ),
+        );
+      }
+    }
   }
 }
