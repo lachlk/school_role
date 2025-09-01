@@ -54,11 +54,12 @@ class _ClassesListState extends State<ClassesList> {
           ..clear()
           ..addAll(classes.map((c) {
             final classID = c['id'] as String;
+            final className = c['name'] as String;
             return DraggableGridItem(
               isDraggable: true,
               child: ClassGridTile(
                 classID: classID,
-                className: c['name'] as String,
+                className: className,
                 uID: widget.uID,
                 classService: widget.classService,
               ),
