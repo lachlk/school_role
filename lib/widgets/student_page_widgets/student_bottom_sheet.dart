@@ -9,11 +9,13 @@ class StudentBottomSheet extends StatefulWidget {
     required this.schoolID,
     required this.classID,
     this.onStudentAdded,
+    this.onRemove,
   });
 
   final String classID;
   final String schoolID;
   final VoidCallback? onStudentAdded;
+  final void Function(String)? onRemove;
 
   @override
   State<StudentBottomSheet> createState() => _StudentBottomSheetState();
@@ -29,6 +31,7 @@ class _StudentBottomSheetState extends State<StudentBottomSheet> {
   bool showNewStudentForm = false;
   List<Student> _searchResults = [];
   Student? _selectedStudent;
+  bool _isStudentInClass = false;
 
   Future<List<String>> _searchStudentNames(String query) async {
     if (query.isEmpty) return [];
@@ -65,10 +68,39 @@ class _StudentBottomSheetState extends State<StudentBottomSheet> {
         studentID: newStudentId,
       );
     }
+
     widget.onStudentAdded?.call();
     if (mounted) Navigator.of(context).pop();
   }
 
+  Future<void> _confirmRemove() async {
+    if (_selectedStudent == null) {
+      return;
+    }
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Remove Student'),
+        content: Text('Are you sure you want to remove ${nameController.text}? This will not delete their profile.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Remove'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && widget.onRemove != null && _selectedStudent != null) {
+      widget.onRemove!(_selectedStudent!.id);
+      if (mounted) Navigator.of(context).pop();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,17 +125,26 @@ class _StudentBottomSheetState extends State<StudentBottomSheet> {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 8),
                     child: Autocomplete<String>(
-                      optionsBuilder: (TextEditingValue textEditingValue) =>
-                          _searchStudentNames(textEditingValue.text),
+                      optionsBuilder: (TextEditingValue textEditingValue) {
+                        nameController.text = textEditingValue.text;
+                        return _searchStudentNames(textEditingValue.text);
+                      },
                       onSelected: (value) async {
                         final selectedStudent =
                             _searchResults.firstWhere((s) => s.name == value);
                         
+                        final isInClass = await _classService.isStudentInClass(
+                          schoolID: widget.schoolID,
+                          classID: widget.classID,
+                          studentID: selectedStudent.id,
+                        );
+
                         setState(() {
                           nameController.text = selectedStudent.name;
                           emailController.text = selectedStudent.email;
                           selectedYearLevel = selectedStudent.yearLevel;
                           _selectedStudent = selectedStudent;
+                          _isStudentInClass = isInClass;
                           showNewStudentForm = true;
                         });
                       },
@@ -111,14 +152,28 @@ class _StudentBottomSheetState extends State<StudentBottomSheet> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.add),
-                  onPressed: () => setState(() {
-                    showNewStudentForm = true;
-                    _selectedStudent = null;
-                    nameController.clear();
-                    emailController.clear();
-                    selectedYearLevel = null;
-                  }),
+                  icon: Icon(
+                    _isStudentInClass
+                        ? Icons.delete
+                        : Icons.add,
+                  ),
+                  color: _isStudentInClass
+                      ? Theme.of(context).colorScheme.onSurface
+                      : null,
+                  onPressed: () {
+                    if (_isStudentInClass) {
+                      _confirmRemove();
+                    } else if (showNewStudentForm) {
+                      _saveStudent();
+                    } else {
+                      setState(() {
+                        showNewStudentForm = true;
+                        _selectedStudent = null;
+                        emailController.clear();
+                        selectedYearLevel = null;
+                      });
+                    }
+                  },
                 ),
               ],
             ),
@@ -152,7 +207,11 @@ class _StudentBottomSheetState extends State<StudentBottomSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextButton(
-                    onPressed: () => setState(() => showNewStudentForm = false),
+                    onPressed: () => setState(() {
+                          showNewStudentForm = false;
+                          _selectedStudent = null;
+                          nameController.clear();
+                        }),
                     child: const Text("Cancel")),
                 ElevatedButton(onPressed: _saveStudent, child: const Text("Save")),
               ],

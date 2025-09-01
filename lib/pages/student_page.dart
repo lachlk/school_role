@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school_role/widgets/student_page_widgets/student_list.dart';
 import 'package:school_role/widgets/student_page_widgets/student_bottom_sheet.dart';
 import 'package:school_role/widgets/custom_app_bar.dart';
+import 'package:school_role/services/class_service.dart';
 
 class StudentPage extends StatefulWidget {
   const StudentPage({
@@ -18,6 +19,15 @@ class StudentPage extends StatefulWidget {
 }
 
 class _StudentPageState extends State<StudentPage> {
+  final ClassService _classService = ClassService();
+
+  Future<void> _removeStudent(String studentID) async {
+    await _classService.removeStudentFromClass(
+      schoolID: widget.schoolID,
+      classID: widget.classID,
+      studentID: studentID,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +52,7 @@ class _StudentPageState extends State<StudentPage> {
           builder: (context) => StudentBottomSheet(
             classID: widget.classID,
             schoolID: widget.schoolID,
-            onStudentAdded: () => setState(() {}),
+            onRemove: _removeStudent,
           ),
         ),
       ),
