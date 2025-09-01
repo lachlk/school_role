@@ -16,14 +16,6 @@ class StudentGridTile extends StatefulWidget {
 }
 
 class _StudentGridTileState extends State<StudentGridTile> {
-  late String _selectedPresence;
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedPresence = 'absent';
-  }
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -35,13 +27,8 @@ class _StudentGridTileState extends State<StudentGridTile> {
         child: ListTile(
           title: Text(widget.student['name']!),
           trailing: PresenceSelector(
-            selectedPresence: _selectedPresence,
-            onPresenceChanged: (newPresence) {
-              setState(() {
-                _selectedPresence = newPresence;
-              });
-              widget.onPresenceChanged(newPresence);
-            },
+            selectedPresence: widget.student['presence'] ?? 'absent',
+            onPresenceChanged: widget.onPresenceChanged,
           ),
         ),
       ),

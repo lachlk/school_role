@@ -5,6 +5,7 @@ import 'package:school_role/widgets/custom_app_bar.dart';
 import 'package:school_role/services/class_service.dart';
 import 'package:school_role/widgets/student_page_widgets/single_day_selector.dart';
 import 'package:school_role/services/attendance_service.dart';
+import 'package:school_role/services/student_service.dart';
 
 class StudentPage extends StatefulWidget {
   const StudentPage({
@@ -25,10 +26,28 @@ class StudentPage extends StatefulWidget {
 class _StudentPageState extends State<StudentPage> {
   final ClassService _classService = ClassService();
   final AttendanceService _attendanceService = AttendanceService();
+  final StudentService _studentService = StudentService();
   final Map<String, String> _attendanceRecords = {};
+  
+  @override
+  void initState() {
+    super.initState();
+    _studentService.streamClassStudents(widget.schoolID, widget.classID).listen((students) {
+      if (mounted) {
+        for (var student in students) {
+          if (!_attendanceRecords.containsKey(student.id)) {
+            _attendanceRecords[student.id] = 'absent';
+          }
+        }
+        setState(() {});
+      }
+    });
+  }
 
   void _onAttendanceChanged(String studentID, String presence) {
-    _attendanceRecords[studentID] = presence;
+    setState(() {
+      _attendanceRecords[studentID] = presence;
+    });
   }
 
   Future<void> _submitPresence() async {
@@ -136,6 +155,7 @@ class _StudentPageState extends State<StudentPage> {
         classID: widget.classID,
         schoolID: widget.schoolID,
         onAttendanceChanged: _onAttendanceChanged,
+        attendanceRecords: _attendanceRecords,
       ),
       floatingActionButton: FloatingActionButton(
         shape: const RoundedRectangleBorder(

@@ -1,11 +1,11 @@
 {
-    "name": "school_role",
-    "short_name": "school_role",
+    "name": "School Role",
+    "short_name": "School_Role",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "A school attendance management application.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
