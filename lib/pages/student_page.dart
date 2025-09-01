@@ -28,9 +28,7 @@ class _StudentPageState extends State<StudentPage> {
   final Map<String, String> _attendanceRecords = {};
 
   void _onAttendanceChanged(String studentID, String presence) {
-    setState(() {
-      _attendanceRecords[studentID] = presence;
-    });
+    _attendanceRecords[studentID] = presence;
   }
 
   Future<void> _submitPresence() async {
@@ -103,6 +101,13 @@ class _StudentPageState extends State<StudentPage> {
           if (!context.mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Presence for $selectedDay submitted!')),
+          );
+
+          await _attendanceService.exportAttendanceAsJson(
+            className: widget.className,
+            selectedDay: selectedDay,
+            selectedPeriod: selectedPeriod,
+            records: _attendanceRecords,
           );
         } catch (e) {
           if (!context.mounted) return;

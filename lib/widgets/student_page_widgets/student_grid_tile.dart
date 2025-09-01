@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_role/widgets/student_page_widgets/presence_selector.dart';
 
-class StudentGridTile extends StatelessWidget {
+class StudentGridTile extends StatefulWidget {
   final Map<String, String> student;
   final ValueChanged<String> onPresenceChanged;
 
@@ -12,6 +12,19 @@ class StudentGridTile extends StatelessWidget {
   });
 
   @override
+  State<StudentGridTile> createState() => _StudentGridTileState();
+}
+
+class _StudentGridTileState extends State<StudentGridTile> {
+  late String _selectedPresence;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedPresence = 'absent';
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(2.0),
@@ -20,10 +33,15 @@ class StudentGridTile extends StatelessWidget {
         elevation: 2,
         color: Theme.of(context).colorScheme.surfaceContainerHigh,
         child: ListTile(
-          title: Text(student['name']!),
+          title: Text(widget.student['name']!),
           trailing: PresenceSelector(
-            selectedPresence: student['presence'] ?? 'absent',
-            onPresenceChanged: onPresenceChanged,
+            selectedPresence: _selectedPresence,
+            onPresenceChanged: (newPresence) {
+              setState(() {
+                _selectedPresence = newPresence;
+              });
+              widget.onPresenceChanged(newPresence);
+            },
           ),
         ),
       ),
