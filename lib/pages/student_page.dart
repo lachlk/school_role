@@ -21,12 +21,24 @@ class StudentPage extends StatefulWidget {
 }
 
 class _StudentPageState extends State<StudentPage> {
+  void _submitPresence() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Presence submitted!')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
         onBackTap: () => Navigator.of(context).pop(),
         title: widget.className,
+        actions: [
+          TextButton(
+            onPressed: _submitPresence,
+            child: const Text('Submit'),
+          ),
+        ],
       ),
       body: StudentList(
         classID: widget.classID,

@@ -4,13 +4,13 @@ import 'package:school_role/widgets/sign_out_button.dart';
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget>? actions;
   final String? title;
-  final VoidCallback? onBackTap; // 🛠️ Added: New named parameter for the back button tap
+  final VoidCallback? onBackTap;
 
   const CustomAppBar({
     super.key,
     this.actions,
     this.title,
-    this.onBackTap, // 🛠️ Added: To the constructor
+    this.onBackTap,
   });
 
   @override
@@ -38,7 +38,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ? IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: onBackTap,
-              color: onBackTap == null ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2) : null,
+              color: onBackTap == null ? Theme.of(context).colorScheme.onSurface : null,
             )
           : null,
       title: title != null ? Text(title!) : null,
