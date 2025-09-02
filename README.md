@@ -6,7 +6,9 @@
 
 - [Features](#features)
 
-- [Installation](#installation)
+- [Usage](#usage)
+
+- [Start Development](#start-development)
 
   - [Prerequisites](#prerequisites)
 
@@ -17,8 +19,6 @@
   - [Firebase:Firestore Database Setup](#firebasefirestore-database-setup)
 
   - [Build and Run](#build-and-run)
-
-- [Usage](#usage)
 
 - [Contributing](#contributing)
 
