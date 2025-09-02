@@ -1,6 +1,6 @@
-# school_role
+# *School Role*
 
-"school_role" is a versatile project designed for teachers to take the role. This comprehensive guide will provide you with everything you need to know to get started with the project, from installation instructions to a detailed description of its features.
+*School Role* is a versatile project designed for teachers to take the role. This comprehensive guide will provide you with everything you need to know to get started with the project, from installation instructions to a detailed description of its features.
 
 ## Table of Contents
 
@@ -28,17 +28,47 @@
 
 ## Features
 
-List the key features and functionalities of your project:
+Key features and functionalities of *School Role*:
 
-- Feature 1: Cross-platform support
+- Multi-sign in with a Google account or email and password
 
-- Feature 2: Dynamic coloring
+- Password Recovery
 
-- Feature 3: Minimilist design
+- Account Sign-up
 
-## Installation
+- Automatic Theming
 
-Follow these steps to install and run school-role on your system.
+- Classes Selection
+
+- Presence Selection
+
+- Cross-platform
+
+- Firestore Database Reading
+
+- Draggable Classes Grid
+
+- Autocomplete Student Search
+
+- Attendance Schedule Writing to Database
+
+- Attendance Schedule Exporting as .json File
+
+- Class Editing and Deletion
+
+- Student Editing and Removal
+
+## Usage
+
+1. To run current version on Android, Windows or Web go to [releases](https://github.com/lachlk/school_role/releases).
+
+2. Download the desired platform file.
+
+3. For Android phones open the .apk. For Windows open the .exe located in Release folder. For web, follow this [tutorial](https://dev.to/tyu1996/deploying-flutter-web-app-on-live-server-5c5).
+
+## Start Development
+
+Follow these steps to develop *School Role* on your system.
 
 ### Prerequisites
 
@@ -67,17 +97,21 @@ Ensure these packages are installed by running:
 ```
 flutter pub add (package_name)
 ```
-- Flutter package [dynamic_color: ^1.7.0](https://pub.dev/packages/dynamic_color)
+- Flutter package [dynamic_color](https://pub.dev/packages/dynamic_color)
 
-- Flutter package [firebase_core: ^3.1.1](https://pub.dev/packages/firebase_core)
+- Flutter package: [firebase_core](https://pub.dev/packages/firebase_core)
 
-- Flutter package [firebase_auth: ^5.1.0](https://pub.dev/packages/firebase_auth)
+- Flutter package: [firebase_auth](https://pub.dev/packages/firebase_auth)
 
-- Flutter package [firebase_ui_auth: ^1.15.0](https://pub.dev/packages/firebase_ui_auth)
+- Flutter package: [firebase_ui_auth](https://pub.dev/packages/firebase_ui_auth)
 
-- Flutter package [google_sign_in: ^6.2.1](https://pub.dev/packages/google_sign_in)
+- Flutter package: [google_sign_in](https://pub.dev/packages/google_sign_in)
 
-- Flutter package [firebase_ui_oauth_google: ^1.3.3](https://pub.dev/packages/firebase_ui_oauth_google)
+- Flutter package: [firebase_ui_oauth_google](https://pub.dev/packages/firebase_ui_oauth_google)
+- Flutter package: [flutter_draggable_gridview](https://pub.dev/packages/flutter_draggable_gridview)
+- Flutter package: [share_plus](https://pub.dev/packages/share_plus)
+- Flutter package: [path_provider](https://pub.dev/packages/path_provider)
+- Flutter package: [file_saver](https://pub.dev/packages/file_saver)
 
 ### Firebase Setup
 1. Go to [firebase.google.com](https://firebase.google.com/)
@@ -120,18 +154,9 @@ flutter build
 
 This will build the project and install it on your connected device or emulator.
 
-## Usage
-Currently writing to a database hasn't been implemented this means you need to manually add classes and students to the firebase database, however, if your a teacher grading my work I will make sure to provide you with a login. Please check eigther the classroom or the "Final Project page" if you cannot find the login please email me. The login email will be my school email.
-
-1. To run current version on Android, Windows or Web go to [releases](https://github.com/lachlk/school_role/releases).
-
-2. Download the desired platform file.
-
-3. For Android phones open the .apk. For Windows open the .exe located in Release folder. For web, follow this [tutorial](https://dev.to/tyu1996/deploying-flutter-web-app-on-live-server-5c5).
-
 ## Contributing
 
-We welcome contributions to school_role however currently it is a school project, and only my work can be graded. If you would like to contribute to the development or report issues, please follow these guidelines:
+We welcome contributions to *School Role*. If you would like to contribute to the development or report issues, please follow these guidelines:
 
 1. Fork the repository.
 
@@ -143,14 +168,9 @@ We welcome contributions to school_role however currently it is a school project
 
 5. Submit a pull request to the main repository.
 
-## Development log
-- [Github project](https://github.com/users/lachlk/projects/1/)
-
-- [Notion page](https://bevel-newsboy-d57.notion.site/7DIT-Major-Project-Portfolio-1263e97aa2a8475e8f1301712843601a?pvs=4)
-
 ## License
 
-school_role is licensed under the [GNU General Public License v3.0](https://github.com/lachlk/school_role/blob/main/LICENSE).
+*School Role* is licensed under the [GNU General Public License v3.0](https://github.com/lachlk/school_role/blob/main/LICENSE).
 
 Thank you for choosing School Role! If you encounter any issues or have suggestions for improvements, please don't hesitate to [create an issue](https://github.com/lachlk/school_role/issues/new/choose) or [contribute to the project](#contributing). We look forward to your feedback and collaboration.
 
