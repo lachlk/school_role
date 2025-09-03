@@ -3,6 +3,10 @@ import 'package:school_role/services/class_service.dart';
 import 'cascading_menu.dart';
 import 'package:school_role/main.dart';
 
+/// A stateless widget that represents a single, interactive grid tile for a class.
+///
+/// This widget displays a class name and provides functionality to navigate to
+/// the student page for that class or access a cascading menu for class options.
 class ClassGridTile extends StatelessWidget {
   const ClassGridTile({
     super.key,
@@ -12,9 +16,13 @@ class ClassGridTile extends StatelessWidget {
     required this.classService,
   });
 
+  /// The unique identifier of the class.
   final String classID;
+  /// The name of the class.
   final String className;
+  /// The unique identifier of the user (teacher).
   final String uID;
+  /// An instance of `ClassService` to manage class data.
   final ClassService classService;
 
   @override

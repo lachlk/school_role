@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:school_role/services/class_service.dart';
 import 'class_bottom_sheet.dart';
 
+/// A stateless widget that provides a cascading menu with 'Delete' and 'Edit'
+/// options for a specific class.
 class CascadingMenu extends StatelessWidget {
   const CascadingMenu({
     super.key,
@@ -9,7 +11,10 @@ class CascadingMenu extends StatelessWidget {
     required this.classService,
   });
 
+  /// The unique identifier of the class.
   final String classID;
+  /// An instance of `ClassService` to perform database operations like
+  /// deleting or fetching class data.
   final ClassService classService;
 
   @override
