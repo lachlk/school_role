@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+/// A stateless widget that provides a segmented button for selecting a single day
+/// from a list of scheduled days.
 class SingleDaySelector extends StatelessWidget {
   const SingleDaySelector({
     super.key,
@@ -8,8 +10,11 @@ class SingleDaySelector extends StatelessWidget {
     required this.onDaySelected,
   });
 
+  /// The list of days to display as selectable segments.
   final List<String> scheduledDays;
+  /// The currently selected day. Can be null if no day is selected.
   final String? selectedDay;
+  /// A callback function that is triggered when a new day is selected.
   final ValueChanged<String?> onDaySelected;
 
   @override
