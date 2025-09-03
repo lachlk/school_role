@@ -3,6 +3,8 @@ import 'package:school_role/services/student_service.dart';
 import 'package:school_role/services/class_service.dart';
 import 'package:school_role/models/student.dart';
 
+/// A `StatefulWidget` that provides a bottom sheet for searching, adding,
+/// and removing students from a specific class.
 class StudentBottomSheet extends StatefulWidget {
   const StudentBottomSheet({
     super.key,
@@ -12,9 +14,13 @@ class StudentBottomSheet extends StatefulWidget {
     this.onRemove,
   });
 
+  /// The unique identifier of the class.
   final String classID;
+  /// The unique identifier of the school.
   final String schoolID;
+  /// Optional callback function to be called after a student is successfully added.
   final VoidCallback? onStudentAdded;
+  /// Optional callback function to be called when a student is removed.
   final void Function(String)? onRemove;
 
   @override
@@ -22,17 +28,22 @@ class StudentBottomSheet extends StatefulWidget {
 }
 
 class _StudentBottomSheetState extends State<StudentBottomSheet> {
+  // Instances of services to manage student and class data.
   final StudentService _studentService = StudentService();
   final ClassService _classService = ClassService();
 
+  // Controllers for the text input fields.
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+
+  // State variables for the widget's UI and data management.
   int? selectedYearLevel;
   bool showNewStudentForm = false;
   List<Student> _searchResults = [];
   Student? _selectedStudent;
   bool _isStudentInClass = false;
 
+  /// Disposes of the text controllers to free up resources.
   @override
   void dispose() {
     nameController.dispose();
@@ -40,6 +51,7 @@ class _StudentBottomSheetState extends State<StudentBottomSheet> {
     super.dispose();
   }
 
+  /// Searches for students whose names match the given query.
   Future<List<String>> _searchStudentNames(String query) async {
     if (query.isEmpty) return [];
     final allStudents = await _studentService.getAllStudents(widget.schoolID);
@@ -49,11 +61,16 @@ class _StudentBottomSheetState extends State<StudentBottomSheet> {
     return _searchResults.map((s) => s.name).toList();
   }
 
+  /// Saves or updates a student and adds them to the class.
+  /// 
+  /// If a student is already selected their profile is updated. Otherwise,
+  /// a new student is created. In both cases, the student is added to the class.
   Future<void> _saveStudent() async {
     final name = nameController.text.trim();
     final email = emailController.text.trim();
     final yearLevel = selectedYearLevel ?? 0;
 
+    // Validates that all required fields have been filled.
     if (name.isEmpty || email.isEmpty || yearLevel <= 0) return;
 
     if (_selectedStudent != null) {
@@ -88,6 +105,9 @@ class _StudentBottomSheetState extends State<StudentBottomSheet> {
     if (mounted) Navigator.of(context).pop();
   }
 
+  /// Displays a confirmation dialog before removing a student from the class.
+  ///
+  /// If the user confirms the `onRemove` callback is executed.
   Future<void> _confirmRemove() async {
     if (_selectedStudent == null) {
       return;
@@ -117,6 +137,7 @@ class _StudentBottomSheetState extends State<StudentBottomSheet> {
     }
   }
 
+  /// Builds the UI for the bottom sheet.
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -131,6 +152,7 @@ class _StudentBottomSheetState extends State<StudentBottomSheet> {
         children: [
           Text("Search Student", style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
+          // Search bar with autocomplete functionality.
           Material(
             borderRadius: BorderRadius.circular(8),
             color: Theme.of(context).colorScheme.surfaceContainerHigh,
@@ -140,6 +162,7 @@ class _StudentBottomSheetState extends State<StudentBottomSheet> {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 8),
                     child: Autocomplete<String>(
+                      // Builds a list of suggestions as the user types.
                       optionsBuilder: (TextEditingValue textEditingValue) {
                         nameController.text = textEditingValue.text;
                         return _searchStudentNames(textEditingValue.text);
@@ -154,6 +177,7 @@ class _StudentBottomSheetState extends State<StudentBottomSheet> {
                           studentID: selectedStudent.id,
                         );
 
+                        // Updates the UI with the selected student's data.
                         setState(() {
                           nameController.text = selectedStudent.name;
                           emailController.text = selectedStudent.email;
@@ -194,6 +218,7 @@ class _StudentBottomSheetState extends State<StudentBottomSheet> {
             ),
           ),
           const SizedBox(height: 16),
+          // Displays the form for adding/editing a student if `showNewStudentForm` is true.
           if (showNewStudentForm) ...[
             TextField(
               controller: nameController,

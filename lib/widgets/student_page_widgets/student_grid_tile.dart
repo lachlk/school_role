@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:school_role/widgets/student_page_widgets/presence_selector.dart';
 
+/// A `StatefulWidget` that displays a student's name and allows for changing
+/// their presence status.
 class StudentGridTile extends StatefulWidget {
-  final Map<String, String> student;
-  final ValueChanged<String> onPresenceChanged;
-
   const StudentGridTile({
     super.key,
     required this.student,
     required this.onPresenceChanged,
   });
+
+  /// A map containing the students data including their name and current presence status.
+  /// The map keys are expected to be 'name' and 'presence'.
+  final Map<String, String> student;
+  final ValueChanged<String> onPresenceChanged;
 
   @override
   State<StudentGridTile> createState() => _StudentGridTileState();
